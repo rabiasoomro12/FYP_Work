@@ -402,17 +402,18 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                             onClick={async () => {
                               setGeneratingReport(true);
                               await generatePatientReport({
-                                patientEmail: user!.email ?? '',
-                                predictedClass: scanResult.predictedClass,
-                                predictedLabel: info?.name ?? scanResult.predictedClass,
-                                confidence: scanResult.confidence,
-                                risk: info?.risk ?? 'Low',
-                                riskColor: info?.color ?? '#10b981',
-                                probabilities: scanResult.probabilities,
-                                previewUrl,
-                                gradcamUrl,
-                                modelCount: modelPredictions.length || 4,
-                              });
+  patientEmail: user!.email ?? '',
+  patientName: fullName || user?.user_metadata?.full_name || 'Unknown Patient',
+  predictedClass: scanResult.predictedClass,
+  predictedLabel: info?.name ?? scanResult.predictedClass,
+  confidence: scanResult.confidence,
+  risk: info?.risk ?? 'Low',
+  riskColor: info?.color ?? '#10b981',
+  probabilities: scanResult.probabilities,
+  previewUrl,
+  gradcamUrl,
+  modelCount: modelPredictions.length || 4,
+});
                               setGeneratingReport(false);
                             }}
                             disabled={generatingReport}
