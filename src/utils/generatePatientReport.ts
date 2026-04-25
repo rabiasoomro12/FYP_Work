@@ -137,11 +137,10 @@ async function urlToDataUrl(url: string): Promise<string | null> {
   }
 }
 
-// Helper function to check if we need a new page
 function checkPageBreak(doc: jsPDF, currentY: number, neededSpace: number, pageHeight: number): number {
-  if (currentY + neededSpace > pageHeight - 20) {
+  if (currentY + neededSpace > pageHeight - 25) {
     doc.addPage();
-    return 20; // Reset Y to top margin
+    return 25;
   }
   return currentY;
 }
@@ -170,44 +169,57 @@ export async function generatePatientReport(data: PatientReportData) {
   // HEADER
   // ═══════════════════════════════════════════════════════════
   doc.setFillColor(15, 23, 42);
-  doc.rect(0, 0, W, 35, 'F');
+  doc.rect(0, 0, W, 32, 'F');
+  
+  // Logo circle
   doc.setFillColor(13, 148, 136);
-  doc.roundedRect(M, 8, 8, 8, 1.5, 1.5, 'F');
-  doc.setTextColor(255, 255, 255);
+  doc.circle(M + 5, 16, 5, 'F');
+  
+  // Brand name
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(15);
-  doc.text('DermAI', M + 11, 14);
+  doc.setFontSize(14);
+  doc.setTextColor(255, 255, 255);
+  doc.text('DermAI', M + 13, 14);
+  
+  // Subtitle
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7);
-  doc.setTextColor(148, 163, 184);
-  doc.text('AI-Powered Skin Disease Classification • Sukkur IBA University', M + 11, 19);
+  doc.setFontSize(6.5);
+  doc.setTextColor(200, 200, 200);
+  doc.text('AI-Powered Skin Disease Classification', M + 13, 19);
+  doc.setTextColor(180, 180, 180);
+  doc.text('Sukkur IBA University', M + 13, 23);
+  
+  // Report title
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(255, 255, 255);
   doc.text('PATIENT REPORT', W - M, 14, { align: 'right' });
+  
+  // Date
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7);
-  doc.setTextColor(148, 163, 184);
+  doc.setTextColor(180, 180, 180);
   doc.text(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), W - M, 19, { align: 'right' });
-  y = 42;
+  
+  y = 40;
 
   // ═══════════════════════════════════════════════════════════
-  // PATIENT INFORMATION CARD
+  // PATIENT INFORMATION
   // ═══════════════════════════════════════════════════════════
   doc.setFillColor(248, 250, 252);
   doc.setDrawColor(226, 232, 240);
   doc.setLineWidth(0.3);
-  doc.roundedRect(M, y, CW, 22, 3, 3, 'FD');
+  doc.roundedRect(M, y, CW, 20, 3, 3, 'FD');
 
-  // Name
+  // Patient Name
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
   doc.setTextColor(100, 116, 139);
   doc.text('PATIENT NAME', M + 6, y + 7);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(15, 23, 42);
-  doc.text(fullName, M + 6, y + 15);
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  doc.text(fullName, M + 6, y + 14);
 
   // Email
   doc.setFont('helvetica', 'bold');
@@ -215,43 +227,43 @@ export async function generatePatientReport(data: PatientReportData) {
   doc.setTextColor(100, 116, 139);
   doc.text('EMAIL', M + 90, y + 7);
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(15, 23, 42);
-  doc.text(data.patientEmail, M + 90, y + 15);
+  doc.setFontSize(8);
+  doc.setTextColor(0, 0, 0);
+  doc.text(data.patientEmail, M + 90, y + 14);
 
-  y += 28;
+  y += 26;
 
   // ═══════════════════════════════════════════════════════════
-  // DIAGNOSIS SUMMARY CARD
+  // DIAGNOSIS CARD
   // ═══════════════════════════════════════════════════════════
   doc.setFillColor(15, 23, 42);
-  doc.roundedRect(M, y, CW, 32, 3, 3, 'F');
+  doc.roundedRect(M, y, CW, 28, 3, 3, 'F');
 
-  // Risk badge
+  // Condition badge
   doc.setFillColor(...riskRgb);
-  doc.roundedRect(M + 6, y + 4, 55, 11, 2, 2, 'F');
+  doc.roundedRect(M + 5, y + 4, 62, 10, 2, 2, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(255, 255, 255);
-  doc.text(`${data.predictedClass.toUpperCase()} - ${data.predictedLabel}`, M + 33.5, y + 11, { align: 'center' });
+  doc.text(`${data.predictedClass.toUpperCase()} - ${data.predictedLabel}`, M + 36, y + 10.5, { align: 'center' });
 
   // Confidence
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(8);
-  doc.text('Confidence', M + 66, y + 7);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.text(`${(data.confidence * 100).toFixed(1)}%`, M + 66, y + 22);
+  doc.setFontSize(7);
+  doc.text('Confidence', M + 72, y + 6);
+  doc.setFontSize(16);
+  doc.text(`${(data.confidence * 100).toFixed(1)}%`, M + 72, y + 20);
 
   // Risk level
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(W - M - 42, y + 4, 37, 10, 2, 2, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
   doc.setTextColor(...riskRgb);
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(W - M - 45, y + 4, 39, 11, 2, 2, 'F');
-  doc.text(`RISK: ${data.risk.toUpperCase()}`, W - M - 25.5, y + 11, { align: 'center' });
+  doc.text(`RISK: ${data.risk.toUpperCase()}`, W - M - 23.5, y + 10.5, { align: 'center' });
 
-  y += 38;
+  y += 34;
 
   // ═══════════════════════════════════════════════════════════
   // CONDITION EXPLANATION
@@ -260,9 +272,9 @@ export async function generatePatientReport(data: PatientReportData) {
   
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
-  doc.setTextColor(100, 116, 139);
+  doc.setTextColor(0, 0, 0);
   doc.text('CONDITION EXPLANATION', M, y);
-  y += 4;
+  y += 3;
   doc.setDrawColor(13, 148, 136);
   doc.setLineWidth(0.4);
   doc.line(M, y, M + CW, y);
@@ -276,22 +288,22 @@ export async function generatePatientReport(data: PatientReportData) {
   doc.roundedRect(M, y - 2, CW, expBoxHeight, 3, 3, 'FD');
   
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(51, 65, 85);
-  doc.text(explanationLines, M + 4, y + 6);
+  doc.setFontSize(8.5);
+  doc.setTextColor(0, 0, 0);
+  doc.text(explanationLines, M + 4, y + 5);
   
   y += expBoxHeight + 8;
 
   // ═══════════════════════════════════════════════════════════
-  // PRECAUTIONS & GUIDELINES
+  // RECOMMENDED GUIDELINES
   // ═══════════════════════════════════════════════════════════
   y = checkPageBreak(doc, y, 30, H);
   
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
-  doc.setTextColor(100, 116, 139);
+  doc.setTextColor(0, 0, 0);
   doc.text('RECOMMENDED GUIDELINES', M, y);
-  y += 4;
+  y += 3;
   doc.setDrawColor(13, 148, 136);
   doc.line(M, y, M + CW, y);
   y += 7;
@@ -299,7 +311,7 @@ export async function generatePatientReport(data: PatientReportData) {
   const allPrecautions = [...conditionInfo.precautions, ...GENERAL_PRECAUTIONS];
   
   for (const precaution of allPrecautions) {
-    y = checkPageBreak(doc, y, 10, H);
+    y = checkPageBreak(doc, y, 8, H);
     
     const bulletLines = doc.splitTextToSize(precaution, CW - 10);
     
@@ -308,11 +320,11 @@ export async function generatePatientReport(data: PatientReportData) {
     doc.circle(M + 3, y + 2, 1.2, 'F');
     
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8.5);
-    doc.setTextColor(51, 65, 85);
-    doc.text(bulletLines, M + 7, y + 5);
+    doc.setFontSize(8);
+    doc.setTextColor(0, 0, 0);
+    doc.text(bulletLines, M + 7, y + 4.5);
     
-    y += bulletLines.length * 5 + 5;
+    y += bulletLines.length * 4.5 + 4;
   }
 
   y += 5;
@@ -324,9 +336,9 @@ export async function generatePatientReport(data: PatientReportData) {
   
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
-  doc.setTextColor(100, 116, 139);
+  doc.setTextColor(0, 0, 0);
   doc.text('PROBABILITY DISTRIBUTION', M, y);
-  y += 4;
+  y += 3;
   doc.setDrawColor(13, 148, 136);
   doc.line(M, y, M + CW, y);
   y += 7;
@@ -335,17 +347,21 @@ export async function generatePatientReport(data: PatientReportData) {
   const barAreaW = CW - 72;
 
   for (const { cls, name: clsName, value } of sorted) {
-    y = checkPageBreak(doc, y, 10, H);
+    y = checkPageBreak(doc, y, 8, H);
     
     const isTop = cls === data.predictedClass;
     const pct = value * 100;
     const barW = Math.max((pct / 100) * barAreaW, 0.5);
 
-    // Class label
-    doc.setFont('helvetica', isTop ? 'bold' : 'normal');
-    doc.setFontSize(8.5);
-    doc.setTextColor(isTop ? 15 : 100, isTop ? 23 : 116, isTop ? 42 : 139);
+    // Class code
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(isTop ? riskRgb[0] : 0, isTop ? riskRgb[1] : 0, isTop ? riskRgb[2] : 0);
     doc.text(cls.toUpperCase(), M, y + 3);
+    
+    // Class name
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
     doc.text(clsName, M + 14, y + 3);
 
     // Background bar
@@ -360,26 +376,26 @@ export async function generatePatientReport(data: PatientReportData) {
     }
 
     // Percentage
-    doc.setFont('helvetica', isTop ? 'bold' : 'normal');
-    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
     doc.text(`${pct.toFixed(1)}%`, W - M, y + 3, { align: 'right' });
 
-    y += 9;
+    y += 8;
   }
 
-  y += 8;
+  y += 6;
 
   // ═══════════════════════════════════════════════════════════
   // IMAGES
   // ═══════════════════════════════════════════════════════════
   if (data.previewUrl || data.gradcamUrl) {
-    y = checkPageBreak(doc, y, 70, H);
+    y = checkPageBreak(doc, y, 75, H);
     
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(0, 0, 0);
     doc.text('IMAGE ANALYSIS', M, y);
-    y += 4;
+    y += 3;
     doc.setDrawColor(13, 148, 136);
     doc.line(M, y, M + CW, y);
     y += 7;
@@ -392,119 +408,106 @@ export async function generatePatientReport(data: PatientReportData) {
       data.gradcamUrl ? urlToDataUrl(data.gradcamUrl) : Promise.resolve(null),
     ]);
 
-    // Left image (Original)
+    // Left image
     if (origData) {
       doc.addImage(origData, 'JPEG', M, y, imgW, imgH, undefined, 'FAST');
-      // Image border
       doc.setDrawColor(226, 232, 240);
       doc.setLineWidth(0.3);
       doc.rect(M, y, imgW, imgH);
-      // Label badge
-      doc.setFillColor(30, 41, 59);
+      
+      // Badge
+      doc.setFillColor(0, 0, 0, 0.7);
       doc.roundedRect(M + 2, y + 2, 16, 5, 1, 1, 'F');
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(6.5);
+      doc.setFontSize(6);
       doc.setTextColor(255, 255, 255);
       doc.text('ORIGINAL', M + 10, y + 5.5, { align: 'center' });
-    } else {
-      // Placeholder
-      doc.setFillColor(248, 250, 252);
-      doc.setDrawColor(226, 232, 240);
-      doc.roundedRect(M, y, imgW, imgH, 2, 2, 'FD');
+      
+      // Caption
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(148, 163, 184);
-      doc.text('No image', M + imgW / 2, y + imgH / 2, { align: 'center' });
+      doc.setFontSize(7);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Original Image', M + imgW / 2, y + imgH + 4, { align: 'center' });
     }
 
-    // Right image (Grad-CAM)
+    // Right image
     if (gcData) {
       doc.addImage(gcData, 'JPEG', M + imgW + 6, y, imgW, imgH, undefined, 'FAST');
       doc.setDrawColor(226, 232, 240);
       doc.setLineWidth(0.3);
       doc.rect(M + imgW + 6, y, imgW, imgH);
-      // Label badge
-      doc.setFillColor(30, 41, 59);
+      
+      // Badge
+      doc.setFillColor(0, 0, 0, 0.7);
       doc.roundedRect(M + imgW + 8, y + 2, 16, 5, 1, 1, 'F');
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(6.5);
+      doc.setFontSize(6);
       doc.setTextColor(255, 255, 255);
       doc.text('GRAD-CAM', M + imgW + 16, y + 5.5, { align: 'center' });
-    } else {
-      // Placeholder
-      doc.setFillColor(248, 250, 252);
-      doc.setDrawColor(226, 232, 240);
-      doc.roundedRect(M + imgW + 6, y, imgW, imgH, 2, 2, 'FD');
+      
+      // Caption
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(148, 163, 184);
-      doc.text('Not available', M + imgW + 6 + imgW / 2, y + imgH / 2, { align: 'center' });
+      doc.setFontSize(7);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Grad-CAM Heatmap', M + imgW + 6 + imgW / 2, y + imgH + 4, { align: 'center' });
     }
 
     y += imgH + 10;
   }
 
   // ═══════════════════════════════════════════════════════════
-  // MODEL INFO (compact)
+  // MODEL INFO
   // ═══════════════════════════════════════════════════════════
-  y = checkPageBreak(doc, y, 20, H);
+  y = checkPageBreak(doc, y, 15, H);
   
   doc.setFont('helvetica', 'italic');
   doc.setFontSize(7);
-  doc.setTextColor(148, 163, 184);
-  doc.text('Analysis by ensemble of 4 AI models trained on HAM10000 dataset', M, y);
-  doc.text('Sukkur IBA University • For research purposes only', M, y + 4);
+  doc.setTextColor(100, 100, 100);
+  doc.text('Analysis performed by ensemble of 4 AI models trained on HAM10000 dataset', M, y);
+  doc.text('Sukkur IBA University — For research purposes only', M, y + 4);
   y += 10;
 
-// ═══════════════════════════════════════════════════════════
-// DISCLAIMER
-// ═══════════════════════════════════════════════════════════
-y = checkPageBreak(doc, y, 40, H);
+  // ═══════════════════════════════════════════════════════════
+  // DISCLAIMER
+  // ═══════════════════════════════════════════════════════════
+  y = checkPageBreak(doc, y, 25, H);
 
-const disclaimerText = 'MEDICAL DISCLAIMER: This AI-generated report is for research and educational purposes only. It does not constitute medical advice or diagnosis. Always consult a licensed dermatologist for proper evaluation and treatment.';
-// Calculate text dimensions
-// In your disclaimer section, update these values:
-const discLines = doc.splitTextToSize(disclaimerText, CW - 16);
-const lineHeight = 4;           // Reduced from 4.5
-const textHeight = discLines.length * lineHeight;
-const boxPadding = 10;           // Reduced from 12
-const boxHeight = textHeight + boxPadding;
+  const disclaimerText = 'MEDICAL DISCLAIMER: This AI-generated report is for research and educational purposes only. It does not constitute medical advice or diagnosis. Always consult a licensed dermatologist for proper evaluation and treatment.';
+  
+  const discLines = doc.splitTextToSize(disclaimerText, CW - 14);
+  const boxHeight = discLines.length * 4.5 + 12;
 
-// Draw disclaimer box
-doc.setFillColor(255, 251, 235);
-doc.setDrawColor(245, 158, 11);
-doc.setLineWidth(0.8);
-doc.roundedRect(M, y, CW, boxHeight, 4, 4, 'FD');
+  doc.setFillColor(255, 251, 235);
+  doc.setDrawColor(245, 158, 11);
+  doc.setLineWidth(0.6);
+  doc.roundedRect(M, y, CW, boxHeight, 3, 3, 'FD');
 
-// Title
-doc.setFont('helvetica', 'bold');
-doc.setFontSize(7.5);            // Slightly smaller
-doc.setTextColor(180, 83, 9);
-doc.text('⚠ MEDICAL DISCLAIMER', M + 8, y + 7);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(180, 83, 9);
+  doc.text('⚠ MEDICAL DISCLAIMER', M + 7, y + 6);
 
-// Separator
-doc.setDrawColor(245, 158, 11, 0.4);
-doc.setLineWidth(0.3);
-doc.line(M + 8, y + 10, W - M - 8, y + 10);
+  doc.setDrawColor(245, 158, 11, 0.3);
+  doc.setLineWidth(0.2);
+  doc.line(M + 7, y + 9, W - M - 7, y + 9);
 
-// Text
-doc.setFont('helvetica', 'normal');
-doc.setFontSize(7);              // Smaller font
-doc.setTextColor(120, 53, 15);
-doc.text(discLines, M + 8, y + 15);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  doc.setTextColor(120, 53, 15);
+  doc.text(discLines, M + 7, y + 14);
 
   // ═══════════════════════════════════════════════════════════
   // FOOTER
   // ═══════════════════════════════════════════════════════════
   const footerY = H - 12;
-  doc.setDrawColor(226, 232, 240);
+  doc.setDrawColor(200, 200, 200);
   doc.setLineWidth(0.3);
   doc.line(M, footerY, W - M, footerY);
   
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
+  doc.setFontSize(6.5);
   doc.setTextColor(0, 0, 0);
-  doc.text('DermAI • Final Year Project - CSE-VIII', M, footerY + 5);
+  doc.text('DermAI • Sukkur IBA University', M, footerY + 5);
   doc.text(`Generated: ${new Date().toLocaleString()}`, W - M, footerY + 5, { align: 'right' });
 
   // Save
