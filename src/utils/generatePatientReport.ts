@@ -163,7 +163,7 @@ export async function generatePatientReport(data: PatientReportData) {
     precautions: ['Consult a healthcare professional for personalized advice.'],
   };
 
-  const fullName = data.patientName || data.patientEmail.split('@')[0];
+  const fullName = data.patientName ?? data.patientEmail.split('@')[0];
 
   // ═══════════════════════════════════════════════════════════
   // HEADER

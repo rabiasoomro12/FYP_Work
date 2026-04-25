@@ -85,7 +85,7 @@ const MODEL_NAMES: Record<string, string> = {
 };
 
 export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
-  const { user } = useAuth();
+  const { user, fullName } = useAuth();
   const { setScanResult, scanResult } = useScan();
   const [dragOver, setDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
