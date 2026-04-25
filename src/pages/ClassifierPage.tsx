@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, Lock, AlertCircle, CheckCircle2, Loader2, Image as ImageIcon, RefreshCw, FlaskConical } from 'lucide-react';
+import { Upload, X, Lock, AlertCircle, CheckCircle2, Loader2, Image as ImageIcon, RefreshCw, FlaskConical, TrendingUp, Download } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useScan } from '../context/ScanContext';
 import { supabase } from '../lib/supabase';
-import ImageClassificationGrid from '../components/ImageClassificationGrid';
+import { generatePatientReport } from '../utils/generatePatientReport';
 
 interface Props { onAuthClick: () => void; }
 
@@ -21,7 +21,30 @@ const CLASS_INFO: Record<string, { name: string; color: string; risk: string; ri
   vasc:  { name: 'Vascular Lesion',      color: '#ec4899', risk: 'Low',      riskBg: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
 };
 
-interface ModelPrediction { model: string; predicted_class: string; confidence: number; probabilities: Record<string, number>; }
+interface ModelPrediction { model: string; predicted_class: string; confidence: number; probabilities: Record<string, number>; gradcam_image?: string; }
+
+// API returns keys like "mel - Melanoma" → extract abbreviation "mel"
+function extractAbbrev(key: string): string {
+  return key.split(' - ')[0].trim().toLowerCase();
+}
+
+function normalizeProbabilities(raw: unknown): Record<string, number> {
+  if (Array.isArray(raw)) {
+    return Object.fromEntries(CLASSES.map((cls, i) => [cls, typeof raw[i] === 'number' ? raw[i] : 0]));
+  }
+  if (raw && typeof raw === 'object') {
+    const result: Record<string, number> = {};
+    for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+      result[extractAbbrev(k)] = typeof v === 'number' ? v : 0;
+    }
+    const maxVal = Math.max(...Object.values(result), 0);
+    if (maxVal > 1) {
+      for (const k of Object.keys(result)) result[k] /= 100;
+    }
+    return result;
+  }
+  return {};
+}
 
 async function callModel(file: File, modelName: string): Promise<ModelPrediction> {
   const form = new FormData();
@@ -30,7 +53,12 @@ async function callModel(file: File, modelName: string): Promise<ModelPrediction
   const res = await fetch(`${HF_BASE}/predict`, { method: 'POST', body: form });
   if (!res.ok) throw new Error(`Model ${modelName} failed: ${res.status}`);
   const data = await res.json();
-  return { model: modelName, ...data };
+  // predicted_class comes as "mel - Melanoma" → extract abbreviation
+  const predicted_class = extractAbbrev(data.predicted_class ?? '');
+  const probabilities = normalizeProbabilities(data.all_probabilities ?? data.probabilities);
+  const rawConf = typeof data.confidence === 'number' ? data.confidence : 0;
+  const confidence = rawConf > 1 ? rawConf / 100 : rawConf;
+  return { model: modelName, predicted_class, confidence, probabilities, gradcam_image: data.gradcam_image };
 }
 
 async function ensemblePredict(file: File) {
@@ -44,7 +72,9 @@ async function ensemblePredict(file: File) {
     averaged[cls] = vals.reduce((a, b) => a + b, 0) / vals.length;
   }
   const predictedClass = Object.entries(averaged).sort((a, b) => b[1] - a[1])[0][0];
-  return { predictions: successful, ensemble: { predictedClass, confidence: averaged[predictedClass], probabilities: averaged } };
+  // Use Grad-CAM from first model that returned one
+  const gradcamImage = successful.find((p) => p.gradcam_image)?.gradcam_image ?? null;
+  return { predictions: successful, ensemble: { predictedClass, confidence: averaged[predictedClass], probabilities: averaged }, gradcamImage };
 }
 
 const MODEL_NAMES: Record<string, string> = {
@@ -66,6 +96,7 @@ export default function ClassifierPage({ onAuthClick }: Props) {
   const [analyzeStep, setAnalyzeStep] = useState('');
   const [apiError, setApiError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const [generatingReport, setGeneratingReport] = useState(false);
 
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith('image/')) return;
@@ -87,7 +118,7 @@ export default function ClassifierPage({ onAuthClick }: Props) {
     setAnalyzing(true); setApiError('');
     setAnalyzeStep('Running ensemble inference (EfficientNet-B0, B3, MobileNetV3, ResNet-50)...');
     try {
-      const { predictions, ensemble } = await ensemblePredict(selectedFile);
+      const { predictions, ensemble, gradcamImage } = await ensemblePredict(selectedFile);
       setModelPredictions(predictions);
       const result = {
         imageUrl: previewUrl,
@@ -96,24 +127,10 @@ export default function ClassifierPage({ onAuthClick }: Props) {
         probabilities: ensemble.probabilities,
       };
       setScanResult(result);
+      // Grad-CAM is returned directly in the predict response as a base64 data URL
+      if (gradcamImage) setGradcamUrl(gradcamImage);
 
-      // Fetch Grad-CAM using the actual image file
-      setAnalyzeStep('Generating Grad-CAM heatmap...');
-      try {
-        const gcForm = new FormData();
-        gcForm.append('file', selectedFile);
-        gcForm.append('model', 'efficientnet_b0');
-        gcForm.append('class', ensemble.predictedClass);
-        const gcRes = await fetch(`${HF_BASE}/gradcam`, { method: 'POST', body: gcForm });
-        if (gcRes.ok) {
-          const blob = await gcRes.blob();
-          setGradcamUrl(URL.createObjectURL(blob));
-        }
-      } catch {
-        // Grad-CAM is non-critical; leave gradcamUrl null
-      }
-
-      if (user) {
+      if (user && supabase) {
         await supabase.from('scan_history').insert({
           user_id: user.id,
           image_url: previewUrl,
@@ -141,30 +158,6 @@ export default function ClassifierPage({ onAuthClick }: Props) {
   };
 
   const info = scanResult ? CLASS_INFO[scanResult.predictedClass] : null;
-
-  const gridImages = useMemo(() => {
-    if (!scanResult || !previewUrl) return [];
-    const imgs = [
-      {
-        src: previewUrl,
-        label: 'Original Image',
-        sublabel: selectedFile?.name ?? '',
-        tag: 'INPUT',
-      },
-    ];
-    if (gradcamUrl) {
-      imgs.push({
-        src: gradcamUrl,
-        label: 'Grad-CAM Heatmap',
-        sublabel: `EfficientNet-B0 · ${info?.name ?? scanResult.predictedClass}`,
-        classification: scanResult.predictedClass.toUpperCase(),
-        confidence: scanResult.confidence * 100,
-        accentColor: info?.color,
-        tag: 'GRAD-CAM',
-      });
-    }
-    return imgs;
-  }, [scanResult, previewUrl, gradcamUrl, selectedFile, info]);
 
   const gridProbabilities = useMemo(() => {
     if (!scanResult) return [];
@@ -400,23 +393,119 @@ export default function ClassifierPage({ onAuthClick }: Props) {
                             style={{ background: info?.color }}
                           />
                         </div>
-                        <div className="flex items-center gap-2 mt-3">
-                          <FlaskConical size={12} className="text-teal-600" />
-                          <p className="text-xs text-slate-400">Ensemble average across {modelPredictions.length} model{modelPredictions.length !== 1 ? 's' : ''}</p>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="flex items-center gap-2">
+                            <FlaskConical size={12} className="text-teal-600" />
+                            <p className="text-xs text-slate-400">Ensemble average across {modelPredictions.length} model{modelPredictions.length !== 1 ? 's' : ''}</p>
+                          </div>
+                          <button
+                            onClick={async () => {
+                              setGeneratingReport(true);
+                              await generatePatientReport({
+                                patientEmail: user!.email ?? '',
+                                predictedClass: scanResult.predictedClass,
+                                predictedLabel: info?.name ?? scanResult.predictedClass,
+                                confidence: scanResult.confidence,
+                                risk: info?.risk ?? 'Low',
+                                riskColor: info?.color ?? '#10b981',
+                                probabilities: scanResult.probabilities,
+                                previewUrl,
+                                gradcamUrl,
+                                modelCount: modelPredictions.length || 4,
+                              });
+                              setGeneratingReport(false);
+                            }}
+                            disabled={generatingReport}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
+                          >
+                            {generatingReport
+                              ? <><Loader2 size={12} className="animate-spin" />Generating…</>
+                              : <><Download size={12} />Download Report</>}
+                          </button>
                         </div>
                       </div>
 
-                      {/* Image comparison grid + probabilities */}
+                      {/* Image comparison: Original vs Grad-CAM */}
                       <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-4">
-                          {gradcamUrl ? 'Image Analysis · Class Probabilities' : 'Class Probabilities'}
-                        </p>
-                        <ImageClassificationGrid
-                          images={gridImages}
-                          probabilities={gridProbabilities}
-                          topClass={scanResult.predictedClass}
-                          columns={gradcamUrl ? 2 : 1}
-                        />
+                        <div className="flex items-center gap-2 mb-4">
+                          <ImageIcon size={13} className="text-teal-600" />
+                          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Image Comparison</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          {/* Original */}
+                          <div className="rounded-xl overflow-hidden border border-slate-200">
+                            <div className="relative aspect-square bg-slate-100">
+                              <img src={previewUrl!} alt="Original dermoscopic image" className="w-full h-full object-cover" />
+                              <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                ORIGINAL
+                              </div>
+                            </div>
+                            <div className="px-3 py-2 border-t border-slate-100 bg-white">
+                              <p className="text-xs font-semibold text-slate-700">Original Image</p>
+                              <p className="text-[11px] text-slate-400 truncate">{selectedFile?.name}</p>
+                            </div>
+                          </div>
+
+                          {/* Grad-CAM */}
+                          <div className="rounded-xl overflow-hidden border border-slate-200">
+                            <div className="relative aspect-square bg-slate-100">
+                              {gradcamUrl ? (
+                                <>
+                                  <img src={gradcamUrl} alt="Grad-CAM heatmap" className="w-full h-full object-cover" />
+                                  <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                    GRAD-CAM
+                                  </div>
+                                  <div
+                                    className="absolute top-2 right-2 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow"
+                                    style={{ background: info?.color }}
+                                  >
+                                    {(scanResult.confidence * 100).toFixed(1)}%
+                                  </div>
+                                </>
+                              ) : (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center p-4">
+                                  <ImageIcon size={24} className="text-slate-300" />
+                                  <p className="text-xs text-slate-400 leading-relaxed">Grad-CAM unavailable</p>
+                                </div>
+                              )}
+                            </div>
+                            <div className="px-3 py-2 border-t border-slate-100 bg-white">
+                              <p className="text-xs font-semibold text-slate-700">Grad-CAM Heatmap</p>
+                              <p className="text-[11px] text-slate-400">EfficientNet-B0 · {info?.name ?? scanResult.predictedClass}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Probability Distribution */}
+                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                        <div className="flex items-center gap-2 mb-4">
+                          <TrendingUp size={13} className="text-teal-600" />
+                          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Probability Distribution</p>
+                        </div>
+                        <div className="space-y-0">
+                          {gridProbabilities.map((p, i) => (
+                            <div key={p.label} className={`py-2 ${i > 0 ? 'border-t border-slate-50' : ''}`}>
+                              <div className="flex items-center justify-between mb-1.5">
+                                <span className={`text-sm ${p.label === scanResult.predictedClass ? 'font-semibold text-slate-800' : 'text-slate-500'}`}>
+                                  <span className="font-mono text-[11px] mr-1.5 text-slate-400">{p.label}</span>{p.name}
+                                </span>
+                                <span className={`text-sm font-bold tabular-nums ${p.label === scanResult.predictedClass ? 'text-slate-800' : 'text-slate-400'}`}>
+                                  {p.value.toFixed(2)}%
+                                </span>
+                              </div>
+                              <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${Math.min(p.value, 100)}%` }}
+                                  transition={{ duration: 0.6, delay: 0.1 + i * 0.06, ease: 'easeOut' }}
+                                  className="h-full rounded-full"
+                                  style={{ background: p.color }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </>
                   )}

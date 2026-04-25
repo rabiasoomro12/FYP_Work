@@ -12,6 +12,7 @@ import EncyclopediaPage from './pages/EncyclopediaPage';
 import ModelComparisonPage from './pages/ModelComparisonPage';
 import MethodologyPage from './pages/MethodologyPage';
 import AboutPage from './pages/AboutPage';
+import AdminPage from './pages/AdminPage';
 
 function AppLayout() {
   const [authOpen, setAuthOpen] = useState(false);
@@ -26,6 +27,7 @@ function AppLayout() {
           <Route path="/models" element={<ModelComparisonPage />} />
           <Route path="/methodology" element={<MethodologyPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </main>
       <Footer />

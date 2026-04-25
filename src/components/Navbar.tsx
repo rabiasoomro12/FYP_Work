@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Menu, X, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { ShieldCheck } from 'lucide-react';
 
 const NAV_LINKS = [
   { to: '/', label: 'Home' },
@@ -16,7 +17,7 @@ const NAV_LINKS = [
 interface NavbarProps { onAuthClick: () => void; }
 
 export default function Navbar({ onAuthClick }: NavbarProps) {
-  const { user, signOut } = useAuth();
+  const { user, role, signOut } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -51,6 +52,11 @@ export default function Navbar({ onAuthClick }: NavbarProps) {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-3">
+                {role === 'doctor' && (
+                  <Link to="/admin" className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
+                    <ShieldCheck size={13} /> Admin
+                  </Link>
+                )}
                 <div className="flex items-center gap-1.5 text-sm text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg">
                   <User size={14} />
                   <span className="font-medium">{user.email?.split('@')[0]}</span>
