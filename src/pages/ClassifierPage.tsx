@@ -116,7 +116,7 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
   const analyze = async () => {
     if (!selectedFile || !previewUrl) return;
     setAnalyzing(true); setApiError('');
-    setAnalyzeStep('Running ensemble inference (EfficientNet-B0, B3, MobileNetV3, ResNet-50)...');
+    setAnalyzeStep('Processing...');
     try {
       const { predictions, ensemble, gradcamImage } = await ensemblePredict(selectedFile);
       setModelPredictions(predictions);
@@ -240,7 +240,7 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                     >
                       {analyzing
                         ? <><Loader2 size={15} className="animate-spin" /><span className="truncate max-w-[200px]">{analyzeStep || 'Analyzing...'}</span></>
-                        : <><ImageIcon size={15} />Run Ensemble Classification</>
+                        : <><ImageIcon size={15} />Run Analysis</>
                       }
                     </button>
                   ) : (
@@ -322,7 +322,7 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                       <FlaskConical size={16} className="text-teal-600" />
                     </div>
                   </div>
-                  <p className="text-slate-700 font-semibold mb-1">Running Ensemble Inference</p>
+                  <p className="text-slate-700 font-semibold mb-1">Start Analysis</p>
                   <p className="text-xs text-slate-400 max-w-xs">{analyzeStep}</p>
                 </motion.div>
               )}
