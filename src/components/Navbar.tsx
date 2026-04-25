@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Menu, X, LogOut, User } from 'lucide-react';
+import { Activity, Menu, X, LogOut, User, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { ShieldCheck } from 'lucide-react';
 
 const NAV_LINKS = [
   { to: '/', label: 'Home' },
-  { to: '/classifier', label: 'Classifier' },
-  { to: '/encyclopedia', label: 'Encyclopedia' },
-  { to: '/models', label: 'Models' },
-  { to: '/methodology', label: 'Methodology' },
-  { to: '/about', label: 'About' },
+  { to: '/classifier', label: 'Analysis' },        // Cleaner and more professional
+  { to: '/encyclopedia', label: 'Lesion Guide' },  // Much better than Encyclopedia
+  { to: '/models', label: 'AI Lab' },              // Highlights your engineering work
+  { to: '/methodology', label: 'How it Works' },   // User-friendly for the demo
+  { to: '/about', label: 'Our Mission' },          // Sounds like a real startup
 ];
 
 interface NavbarProps { onAuthClick: () => void; }
@@ -22,25 +21,33 @@ export default function Navbar({ onAuthClick }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all duration-300">
+      {/* Subtle top accent line for a "Topper" finish */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-500" />
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center shadow-sm">
-              <Activity className="text-white" size={17} />
+          
+          {/* Logo Section */}
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-600 to-teal-400 flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform duration-300">
+              <Activity className="text-white" size={18} />
             </div>
-            <span className="font-bold text-slate-800 tracking-tight text-lg">
-              Derm<span className="text-teal-600">AI</span>
+            <span className="font-extrabold text-slate-800 tracking-tight text-xl">
+              Derm<span className="bg-gradient-to-r from-teal-600 to-emerald-500 bg-clip-text text-transparent">AI</span>
             </span>
           </Link>
 
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map(({ to, label }) => {
               const active = location.pathname === to;
               return (
                 <Link key={to} to={to}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                    active ? 'text-teal-700 bg-teal-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                    active 
+                      ? 'text-teal-700 bg-teal-50/80 shadow-sm' 
+                      : 'text-slate-600 hover:text-teal-600 hover:bg-slate-50'
                   }`}
                 >
                   {label}
@@ -49,62 +56,69 @@ export default function Navbar({ onAuthClick }: NavbarProps) {
             })}
           </div>
 
+          {/* User Actions */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-3">
                 {role === 'doctor' && (
-                  <Link to="/admin" className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
+                  <Link to="/admin" className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-100">
                     <ShieldCheck size={13} /> Admin
                   </Link>
                 )}
-                <div className="flex items-center gap-1.5 text-sm text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg">
-                  <User size={14} />
-                  <span className="font-medium">{user.email?.split('@')[0]}</span>
+                <div className="flex items-center gap-1.5 text-sm text-slate-600 bg-slate-100/50 border border-slate-200/50 px-3 py-1.5 rounded-lg">
+                  <User size={14} className="text-teal-600" />
+                  <span className="font-semibold">{user.email?.split('@')[0]}</span>
                 </div>
                 <button onClick={() => signOut()}
-                  className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors px-2 py-1.5"
+                  className="flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-red-600 transition-colors px-2 py-1.5"
                 >
                   <LogOut size={14} /> Logout
                 </button>
               </div>
             ) : (
               <button onClick={onAuthClick}
-                className="px-4 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
+                className="px-5 py-2 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 text-white text-sm font-bold rounded-xl transition-all shadow-md active:scale-95"
               >
                 Sign In
               </button>
             )}
           </div>
 
-          <button className="md:hidden text-slate-500 hover:text-slate-800 p-1" onClick={() => setMobileOpen(!mobileOpen)}>
+          {/* Mobile Menu Button */}
+          <button className="md:hidden text-slate-500 hover:text-slate-800 p-2 rounded-lg bg-slate-50" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
+      {/* Mobile Navigation Menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-slate-200 bg-white"
+            initial={{ opacity: 0, y: -10 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            exit={{ opacity: 0, y: -10 }}
+            className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-lg"
           >
-            <div className="px-4 py-3 flex flex-col gap-1">
+            <div className="px-4 py-4 flex flex-col gap-2">
               {NAV_LINKS.map(({ to, label }) => (
                 <Link key={to} to={to} onClick={() => setMobileOpen(false)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === to ? 'text-teal-700 bg-teal-50' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  className={`px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
+                    location.pathname === to 
+                      ? 'text-teal-700 bg-teal-50' 
+                      : 'text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   {label}
                 </Link>
               ))}
-              <div className="pt-2 border-t border-slate-100 mt-1">
+              <div className="pt-3 border-t border-slate-100 mt-2">
                 {user ? (
-                  <button onClick={() => { signOut(); setMobileOpen(false); }} className="w-full text-left px-3 py-2 text-sm text-slate-500">
+                  <button onClick={() => { signOut(); setMobileOpen(false); }} className="w-full text-left px-4 py-3 text-sm font-bold text-red-500">
                     Logout ({user.email?.split('@')[0]})
                   </button>
                 ) : (
-                  <button onClick={() => { onAuthClick(); setMobileOpen(false); }} className="w-full px-3 py-2 bg-teal-600 text-white text-sm font-semibold rounded-lg">
+                  <button onClick={() => { onAuthClick(); setMobileOpen(false); }} className="w-full px-4 py-3 bg-teal-600 text-white text-sm font-bold rounded-xl">
                     Sign In
                   </button>
                 )}
