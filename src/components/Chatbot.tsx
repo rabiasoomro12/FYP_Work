@@ -1,173 +1,393 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Loader2, Activity, Bot, Sparkles } from 'lucide-react';
-import { useScan } from '../context/ScanContext';
+import type { KeyboardEvent } from 'react';
+import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+import { ChatMessage } from '../types';
 
-const HF_BASE = 'https://rabia12345-dermai.hf.space';
-
-interface Message { role: 'user' | 'assistant'; content: string; }
-
-const CLASS_CONTEXT: Record<string, string> = {
-  mel:   'Melanoma — a critical malignant melanocytic neoplasm. High risk. Early detection is essential.',
-  nv:    'Melanocytic Nevus — a common benign mole. Low risk. Monitor for ABCDE changes.',
-  bcc:   'Basal Cell Carcinoma — the most common skin cancer. High risk. Locally invasive.',
-  akiec: 'Actinic Keratosis — UV-induced precancerous lesion. Moderate risk. ~10% SCC progression.',
-  bkl:   'Benign Keratosis — seborrheic keratosis / solar lentigo. Low risk. No malignant potential.',
-  df:    'Dermatofibroma — benign fibrohistiocytic nodule. Low risk. Dimple sign on pinching.',
-  vasc:  'Vascular Lesion — cherry angioma/angiokeratoma. Low risk. Benign vascular proliferation.',
+const KNOWLEDGE: Record<string, string> = {
+  melanoma: 'Melanoma (mel) is the most dangerous type of skin cancer. It develops from melanocytes and can spread to other organs. Early detection is critical — look for asymmetry, irregular borders, multiple colors, diameter >6mm, and evolving changes (the ABCDEs).',
+  mel: 'Melanoma (mel) is the most dangerous type of skin cancer. It develops from melanocytes and can spread to other organs. Early detection is critical — look for asymmetry, irregular borders, multiple colors, diameter >6mm, and evolving changes (the ABCDEs).',
+  bcc: 'Basal Cell Carcinoma (bcc) is the most common skin cancer. It rarely spreads but can cause local tissue damage if untreated. Appears as a pearly bump, flat scar-like lesion, or bleeding sore. Highly treatable when caught early.',
+  'basal cell': 'Basal Cell Carcinoma (bcc) is the most common skin cancer. It rarely spreads but can cause local tissue damage if untreated. Appears as a pearly bump, flat scar-like lesion, or bleeding sore. Highly treatable when caught early.',
+  akiec: 'Actinic Keratosis (akiec) is a pre-cancerous rough, scaly patch caused by years of sun exposure. It can progress to squamous cell carcinoma if left untreated. Treatment includes cryotherapy, topical creams, or photodynamic therapy.',
+  'actinic': 'Actinic Keratosis (akiec) is a pre-cancerous rough, scaly patch caused by years of sun exposure. It can progress to squamous cell carcinoma if left untreated. Treatment includes cryotherapy, topical creams, or photodynamic therapy.',
+  bkl: 'Benign Keratosis (bkl) includes seborrheic keratoses — harmless, waxy, wart-like growths that appear with age. They are not cancerous and do not require treatment unless they are bothersome.',
+  'benign keratosis': 'Benign Keratosis (bkl) includes seborrheic keratoses — harmless, waxy, wart-like growths that appear with age. They are not cancerous and do not require treatment unless they are bothersome.',
+  df: 'Dermatofibroma (df) is a benign skin growth that appears as a small, firm bump, usually on the legs. It is harmless and typically does not require treatment unless it causes discomfort.',
+  dermatofibroma: 'Dermatofibroma (df) is a benign skin growth that appears as a small, firm bump, usually on the legs. It is harmless and typically does not require treatment unless it causes discomfort.',
+  nv: 'Melanocytic Nevus (nv) is a common mole — a benign cluster of pigmented cells. Most are harmless, but monitor for changes in size, shape, or color. Use the ABCDE rule; consult a dermatologist if you notice changes.',
+  mole: 'Melanocytic Nevus (nv) is a common mole — a benign cluster of pigmented cells. Most are harmless, but monitor for changes in size, shape, or color. Use the ABCDE rule; consult a dermatologist if you notice changes.',
+  nevus: 'Melanocytic Nevus (nv) is a common mole — a benign cluster of pigmented cells. Most are harmless, but monitor for changes in size, shape, or color. Use the ABCDE rule; consult a dermatologist if you notice changes.',
+  vasc: 'Vascular Lesion (vasc) includes benign blood vessel abnormalities like hemangiomas and angiomas. Most are harmless. Hemangiomas in infants usually shrink over time.',
+  vascular: 'Vascular Lesion (vasc) includes benign blood vessel abnormalities like hemangiomas and angiomas. Most are harmless. Hemangiomas in infants usually shrink over time.',
+  treatment: 'Treatment depends on the specific condition. Benign lesions (nv, df, bkl, vasc) typically need no treatment. Actinic keratosis (akiec) can be treated with cryotherapy or topical creams. Skin cancers (mel, bcc) require surgical removal, and sometimes radiation or immunotherapy.',
+  prevention: 'Skin cancer prevention tips: (1) Apply broad-spectrum SPF 30+ sunscreen daily, (2) Avoid tanning beds, (3) Wear protective clothing and hats, (4) Seek shade between 10am–4pm, (5) Perform monthly self-skin checks, (6) Get annual dermatologist exams.',
+  sunscreen: 'Use a broad-spectrum sunscreen with SPF 30 or higher. Apply 15 minutes before sun exposure and reapply every 2 hours, or after swimming or sweating. Sunscreen is one of the best defenses against skin cancer.',
+  symptoms: 'Common warning signs include: a sore that does not heal, a spot that bleeds or itches, a mole that changes in size/shape/color, a new growth, or a lesion with irregular borders. Use the ABCDE rule for moles: Asymmetry, Border, Color, Diameter, Evolving.',
+  abcde: 'The ABCDE rule for evaluating moles: A = Asymmetry (one half doesn\'t match), B = Border (irregular, ragged edges), C = Color (multiple shades of brown, black, red), D = Diameter (larger than 6mm / pencil eraser), E = Evolving (changing over time). If any apply, see a dermatologist.',
+  risk: 'Risk factors for skin cancer include: fair skin, history of sunburns, excessive sun/UV exposure, family history of skin cancer, many moles, weakened immune system, and exposure to radiation or certain chemicals.',
+  doctor: 'You should see a dermatologist if you notice: a new or changing spot, a sore that does not heal, an unusual mole, or anything that concerns you. Early detection significantly improves outcomes for skin cancer.',
+  confidence: 'The confidence percentage shown in DermAI represents how certain the AI ensemble is about its prediction. A higher confidence means the models agree more strongly. Always consult a doctor — AI is a screening tool, not a diagnosis.',
+  gradcam: 'The Grad-CAM (Gradient-weighted Class Activation Mapping) image highlights the areas of your skin lesion that the AI model focused on when making its prediction. Brighter/redder areas indicate higher importance to the decision.',
+  ham10000: 'DermAI was trained on the HAM10000 dataset — a collection of 10,015 dermatoscopic images covering 7 skin lesion categories. This dataset is widely used in dermatology AI research.',
+  model: 'DermAI uses an ensemble of 4 deep learning models: EfficientNet-B0, EfficientNet-B3, MobileNetV3, and ResNet-50. Each model votes on the diagnosis, and results are averaged for more reliable predictions.',
+  accuracy: 'The ensemble approach combines multiple models to improve accuracy and reduce individual model errors. The system was trained and validated on the HAM10000 dermatoscopy dataset.',
 };
 
-export default function Chatbot() {
-  const { scanResult } = useScan();
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const focusMode = !!scanResult?.predictedClass;
+function getLocalResponse(message: string, context?: string): string {
+  const lower = message.toLowerCase();
 
-  useEffect(() => { if (open && inputRef.current) inputRef.current.focus(); }, [open]);
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, loading]);
+  if (/(hello|hi|hey|greet)/i.test(lower)) {
+    return context
+      ? `Hi! I can help you understand more about **${context}** or answer general skin disease questions. What would you like to know?`
+      : 'Hello! I\'m the DermAI Assistant. I can answer questions about skin conditions, symptoms, prevention, and how DermAI works. What would you like to know?';
+  }
+
+  if (/(thank|thanks|great|awesome|perfect)/i.test(lower)) {
+    return 'You\'re welcome! Remember, DermAI is a screening tool — always consult a licensed dermatologist for a proper diagnosis. Is there anything else I can help with?';
+  }
+
+  if (/(what is|tell me about|explain|describe|info about)\s+(dermai|this app|how it works)/i.test(lower)) {
+    return 'DermAI is an AI-powered skin disease classifier that uses an ensemble of 4 deep learning models (EfficientNet-B0, B3, MobileNetV3, ResNet-50) trained on the HAM10000 dataset to classify 7 types of skin lesions. It also provides Grad-CAM visualizations and downloadable reports.';
+  }
+
+  const SHORT_KEYS = new Set(['mel', 'bcc', 'bkl', 'akiec', 'df', 'nv', 'vasc']);
+  for (const [keyword, response] of Object.entries(KNOWLEDGE)) {
+    const pattern = SHORT_KEYS.has(keyword)
+      ? new RegExp(`\\b${keyword}\\b`, 'i')
+      : lower.includes(keyword);
+    if (typeof pattern === 'boolean' ? pattern : pattern.test(lower)) return response;
+  }
+
+  if (context) {
+    const contextResponse = KNOWLEDGE[context.toLowerCase()];
+    if (contextResponse) {
+      return `Based on your scan result (${context}): ${contextResponse}\n\nFor specific medical advice, please consult a qualified dermatologist.`;
+    }
+    return `You were diagnosed with **${context}**. I don't have detailed information on that specific variant right now, but I recommend consulting a dermatologist for a professional evaluation. Is there something specific you'd like to know?`;
+  }
+
+  return 'I can help with questions about skin conditions (melanoma, BCC, actinic keratosis, moles, etc.), prevention tips, Grad-CAM explanations, and how DermAI works. Could you rephrase your question or ask about a specific condition?';
+}
+
+interface ChatWidgetProps {
+  predictedClass?: string;
+}
+
+export default function ChatWidget({ predictedClass }: ChatWidgetProps) {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      role: 'ai',
+      text: 'Hello! I am DermAI Assistant. Ask me anything about skin diseases or upload an image to get started!',
+    },
+  ]);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (focusMode && scanResult) {
-      const clsInfo = CLASS_CONTEXT[scanResult.predictedClass] ?? scanResult.predictedClass.toUpperCase();
-      setMessages([{
-        role: 'assistant',
-        content: `**Focus Mode activated.**\n\nDetected: **${clsInfo}** (${(scanResult.confidence * 100).toFixed(1)}% ensemble confidence)\n\nI'm now focused on this condition. Ask me about symptoms, risk factors, precautions, or next steps.`,
-      }]);
+    if (predictedClass) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'ai',
+          text: `I can see your image was analyzed and detected as "${predictedClass}". Feel free to ask me anything about this condition!`,
+        },
+      ]);
     }
-  }, [scanResult?.predictedClass]);
+  }, [predictedClass]);
 
-  const send = async () => {
-    if (!input.trim() || loading) return;
-    const userMsg: Message = { role: 'user', content: input.trim() };
-    setMessages((prev) => [...prev, userMsg]);
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text || sending) return;
     setInput('');
-    setLoading(true);
-    try {
-      const context = focusMode && scanResult
-        ? `FOCUS MODE: The AI detected ${scanResult.predictedClass.toUpperCase()} with ${(scanResult.confidence * 100).toFixed(1)}% confidence. ${CLASS_CONTEXT[scanResult.predictedClass] ?? ''} Answer exclusively about this condition.`
-        : 'You are the DermAI Clinical Assistant for a skin disease classification system built at Sukkur IBA University using EfficientNet-B0 on HAM10000. Answer general dermatology and project-related questions.';
+    setMessages((prev) => [...prev, { role: 'user', text }]);
+    setSending(true);
 
-      const res = await fetch(`${HF_BASE}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMsg].map(({ role, content }) => ({ role, content })), system: context }),
-      });
-      if (!res.ok) throw new Error(`API error ${res.status}`);
-      const data = await res.json();
-      const content: string = data.response ?? data.content ?? data.message ?? data.text ?? (typeof data === 'string' ? data : 'Sorry, I could not generate a response.');
-      setMessages((prev) => [...prev, { role: 'assistant', content }]);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      setMessages((prev) => [...prev, { role: 'assistant', content: `Error connecting to chat API: ${msg}` }]);
-    } finally {
-      setLoading(false);
+    await new Promise((r) => setTimeout(r, 400));
+
+    const reply = getLocalResponse(text, predictedClass);
+    setMessages((prev) => [...prev, { role: 'ai', text: reply }]);
+    setSending(false);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
   };
 
-  const handleKey = (e: React.KeyboardEvent) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
-  const renderText = (t: string) => t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>');
-
   return (
     <>
-      <motion.button
-        onClick={() => setOpen(true)}
-        whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-all ${open ? 'opacity-0 pointer-events-none' : 'opacity-100'} ${focusMode ? 'bg-teal-500' : 'bg-teal-600'}`}
-      >
-        <MessageCircle size={22} className="text-white" />
-        {focusMode && <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-400 border-2 border-white animate-pulse" />}
-      </motion.button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed bottom-6 right-6 z-50 w-[375px] max-w-[calc(100vw-2rem)] h-[530px] flex flex-col rounded-2xl shadow-2xl overflow-hidden bg-white border border-slate-200"
+      {open && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '90px',
+            right: '24px',
+            width: '360px',
+            height: '500px',
+            background: '#ffffff',
+            borderRadius: '20px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            zIndex: 9999,
+            border: '1px solid #e2e8f0',
+          }}
+        >
+          {/* Header */}
+          <div
+            style={{
+              background: '#0f172a',
+              padding: '16px 20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
           >
-            <div className={`flex items-center justify-between px-4 py-3 border-b border-slate-100 ${focusMode ? 'bg-teal-50' : 'bg-white'}`}>
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm">
-                  <Activity size={15} className="text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">DermAI Clinical Assistant</p>
-                  <div className="flex items-center gap-1">
-                    {focusMode ? (
-                      <><span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" /><p className="text-[10px] font-semibold text-teal-600">Focus Mode — {scanResult?.predictedClass?.toUpperCase()}</p></>
-                    ) : (
-                      <><Sparkles size={9} className="text-slate-400" /><p className="text-[10px] text-slate-400">General Mode · HuggingFace API</p></>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-600 p-1"><X size={18} /></button>
+            <div
+              style={{
+                background: 'rgba(13,148,136,0.2)',
+                borderRadius: '10px',
+                padding: '6px',
+                display: 'flex',
+              }}
+            >
+              <Bot size={18} color="#0d9488" />
             </div>
-
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide bg-slate-50/40">
-              {messages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full text-center gap-3 py-8">
-                  <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center">
-                    <Bot size={22} className="text-teal-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-700 mb-0.5">DermAI Clinical Assistant</p>
-                    <p className="text-xs text-slate-400 max-w-[220px] leading-relaxed">Ask me about skin conditions, how the AI works, or anything dermatology-related.</p>
-                  </div>
-                </div>
-              )}
-              {messages.map((msg, i) => (
-                <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  {msg.role === 'assistant' && (
-                    <div className="w-6 h-6 rounded-lg bg-teal-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-                      <Activity size={11} className="text-white" />
-                    </div>
-                  )}
-                  <div
-                    className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-                      msg.role === 'user' ? 'bg-teal-600 text-white rounded-br-md shadow-sm' : 'bg-white text-slate-700 rounded-bl-md shadow-sm border border-slate-100'
-                    }`}
-                    dangerouslySetInnerHTML={{ __html: renderText(msg.content) }}
-                  />
-                </div>
-              ))}
-              {loading && (
-                <div className="flex gap-2 justify-start">
-                  <div className="w-6 h-6 rounded-lg bg-teal-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-                    <Activity size={11} className="text-white" />
-                  </div>
-                  <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 flex gap-1.5 items-center shadow-sm border border-slate-100">
-                    {[0, 1, 2].map((d) => (
-                      <motion.span key={d} className="w-1.5 h-1.5 rounded-full bg-teal-400"
-                        animate={{ y: [0, -4, 0] }} transition={{ duration: 0.6, delay: d * 0.15, repeat: Infinity }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-              <div ref={bottomRef} />
+            <div style={{ flex: 1 }}>
+              <p style={{ color: 'white', fontWeight: 600, fontSize: '14px', margin: 0 }}>
+                DermAI Assistant
+              </p>
+              <p style={{ color: '#94a3b8', fontSize: '12px', margin: 0 }}>
+                {predictedClass
+                  ? `Discussing: ${predictedClass}`
+                  : 'Ask about any skin condition'}
+              </p>
             </div>
+            <button
+              onClick={() => setOpen(false)}
+              style={{
+                background: 'rgba(255,255,255,0.1)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '6px',
+                cursor: 'pointer',
+                display: 'flex',
+              }}
+            >
+              <X size={16} color="white" />
+            </button>
+          </div>
 
-            <div className="p-3 border-t border-slate-100 bg-white">
-              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus-within:border-teal-400 transition-colors">
-                <input ref={inputRef} type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKey}
-                  placeholder={focusMode ? `Ask about ${scanResult?.predictedClass}...` : 'Ask DermAI anything...'}
-                  className="flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
-                />
-                <button onClick={send} disabled={!input.trim() || loading}
-                  className="w-7 h-7 rounded-lg bg-teal-600 disabled:opacity-40 flex items-center justify-center hover:bg-teal-700 transition-colors flex-shrink-0 shadow-sm"
+          {/* Messages */}
+          <div
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              background: '#f8fafc',
+            }}
+          >
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  gap: '8px',
+                  flexDirection: msg.role === 'user' ? 'row-reverse' : 'row',
+                  alignItems: 'flex-end',
+                }}
+              >
+                <div
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    background: msg.role === 'user' ? '#0d9488' : '#0f172a',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
                 >
-                  {loading ? <Loader2 size={13} className="animate-spin text-white" /> : <Send size={13} className="text-white" />}
-                </button>
+                  {msg.role === 'user' ? (
+                    <User size={13} color="white" />
+                  ) : (
+                    <Bot size={13} color="#0d9488" />
+                  )}
+                </div>
+                <div
+                  style={{
+                    maxWidth: '75%',
+                    padding: '10px 14px',
+                    borderRadius:
+                      msg.role === 'user'
+                        ? '18px 18px 4px 18px'
+                        : '18px 18px 18px 4px',
+                    background: msg.role === 'user' ? '#0d9488' : 'white',
+                    color: msg.role === 'user' ? 'white' : '#1e293b',
+                    fontSize: '13px',
+                    lineHeight: '1.6',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+                    border: msg.role === 'ai' ? '1px solid #e2e8f0' : 'none',
+                    whiteSpace: 'pre-wrap',
+                  }}
+                >
+                  {msg.text}
+                </div>
               </div>
-            </div>
-          </motion.div>
+            ))}
+
+            {sending && (
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
+                <div
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    background: '#0f172a',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Bot size={13} color="#0d9488" />
+                </div>
+                <div
+                  style={{
+                    background: 'white',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '18px 18px 18px 4px',
+                    padding: '12px 16px',
+                    display: 'flex',
+                    gap: '4px',
+                    alignItems: 'center',
+                  }}
+                >
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      style={{
+                        width: '7px',
+                        height: '7px',
+                        borderRadius: '50%',
+                        background: '#94a3b8',
+                        animation: 'bounce 1s infinite',
+                        animationDelay: `${i * 0.15}s`,
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
+
+          {/* Input */}
+          <div
+            style={{
+              padding: '12px 16px',
+              borderTop: '1px solid #e2e8f0',
+              display: 'flex',
+              gap: '8px',
+              background: 'white',
+            }}
+          >
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask about skin conditions..."
+              style={{
+                flex: 1,
+                padding: '10px 14px',
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+                fontSize: '13px',
+                outline: 'none',
+                background: '#f8fafc',
+                color: '#1e293b',
+              }}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={!input.trim() || sending}
+              style={{
+                background: input.trim() && !sending ? '#0d9488' : '#e2e8f0',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '10px 14px',
+                cursor: input.trim() && !sending ? 'pointer' : 'not-allowed',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background 0.2s',
+              }}
+            >
+              <Send size={16} color={input.trim() && !sending ? 'white' : '#94a3b8'} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Button */}
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          background: '#0d9488',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 8px 25px rgba(13,148,136,0.4)',
+          zIndex: 10000,
+          transition: 'transform 0.2s',
+        }}
+      >
+        {open ? <X size={24} color="white" /> : <MessageCircle size={24} color="white" />}
+        {!open && (
+          <span
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              borderRadius: '50%',
+              background: 'rgba(13,148,136,0.3)',
+              animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite',
+            }}
+          />
         )}
-      </AnimatePresence>
+      </button>
+
+      <style>{`
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+        @keyframes ping {
+          0% { transform: scale(1); opacity: 0.8; }
+          100% { transform: scale(1.6); opacity: 0; }
+        }
+      `}</style>
     </>
   );
 }
