@@ -16,13 +16,14 @@ import AdminPage from './pages/AdminPage';
 
 function AppLayout() {
   const [authOpen, setAuthOpen] = useState(false);
+  const [predictedClass, setPredictedClass] = useState<string | undefined>(undefined);
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar onAuthClick={() => setAuthOpen(true)} />
       <main className="flex-1 pt-16">
         <Routes>
           <Route path="/" element={<LandingPage onAuthClick={() => setAuthOpen(true)} />} />
-          <Route path="/classifier" element={<ClassifierPage onAuthClick={() => setAuthOpen(true)} />} />
+          <Route path="/classifier" element={<ClassifierPage onAuthClick={() => setAuthOpen(true)} onPrediction={setPredictedClass} />} />
           <Route path="/encyclopedia" element={<EncyclopediaPage />} />
           <Route path="/models" element={<ModelComparisonPage />} />
           <Route path="/methodology" element={<MethodologyPage />} />
@@ -32,7 +33,7 @@ function AppLayout() {
       </main>
       <Footer />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
-      <Chatbot />
+      <Chatbot predictedClass={predictedClass} />
     </div>
   );
 }

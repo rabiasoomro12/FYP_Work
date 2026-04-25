@@ -6,7 +6,7 @@ import { useScan } from '../context/ScanContext';
 import { supabase } from '../lib/supabase';
 import { generatePatientReport } from '../utils/generatePatientReport';
 
-interface Props { onAuthClick: () => void; }
+interface Props { onAuthClick: () => void; onPrediction?: (cls: string) => void; }
 
 const HF_BASE = 'https://rabia12345-dermai.hf.space';
 const CLASSES = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc'];
@@ -84,7 +84,7 @@ const MODEL_NAMES: Record<string, string> = {
   resnet50: 'ResNet-50',
 };
 
-export default function ClassifierPage({ onAuthClick }: Props) {
+export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
   const { user } = useAuth();
   const { setScanResult, scanResult } = useScan();
   const [dragOver, setDragOver] = useState(false);
@@ -127,7 +127,7 @@ export default function ClassifierPage({ onAuthClick }: Props) {
         probabilities: ensemble.probabilities,
       };
       setScanResult(result);
-      // Grad-CAM is returned directly in the predict response as a base64 data URL
+      onPrediction?.(ensemble.predictedClass);
       if (gradcamImage) setGradcamUrl(gradcamImage);
 
       if (user && supabase) {
