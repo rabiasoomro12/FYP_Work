@@ -6,11 +6,11 @@ import { useAuth } from '../context/AuthContext';
 
 const NAV_LINKS = [
   { to: '/', label: 'Home' },
-  { to: '/classifier', label: 'Analysis' },        // Cleaner and more professional
-  { to: '/encyclopedia', label: 'Lesion Guide' },  // Much better than Encyclopedia
-  { to: '/models', label: 'AI Lab' },              // Highlights your engineering work
+  { to: '/classifier', label: 'Smart Scan' },        // Cleaner and more professional
+  { to: '/encyclopedia', label: 'Disease Library' },  // Much better than Encyclopedia
+  { to: '/models', label: 'Models' },              // Highlights your engineering work
   { to: '/methodology', label: 'How it Works' },   // User-friendly for the demo
-  { to: '/about', label: 'Our Mission' },          // Sounds like a real startup
+  { to: '/about', label: 'About' },          // Sounds like a real startup
 ];
 
 interface NavbarProps { onAuthClick: () => void; }
