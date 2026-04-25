@@ -456,25 +456,42 @@ export async function generatePatientReport(data: PatientReportData) {
   doc.text('Sukkur IBA University • For research purposes only', M, y + 4);
   y += 10;
 
-  // ═══════════════════════════════════════════════════════════
-  // DISCLAIMER
-  // ═══════════════════════════════════════════════════════════
-  y = checkPageBreak(doc, y, 35, H);
+// ═══════════════════════════════════════════════════════════
+// DISCLAIMER
+// ═══════════════════════════════════════════════════════════
+y = checkPageBreak(doc, y, 40, H);
 
-  const disclaimerText = 'MEDICAL DISCLAIMER: This AI-generated report is for research and educational purposes ONLY. It does NOT constitute medical advice, diagnosis, or treatment recommendation. Always consult a licensed dermatologist or healthcare professional for proper evaluation. Do not delay seeking professional medical advice based on this report.';
-  
-  const discLines = doc.splitTextToSize(disclaimerText, CW - 10);
-  const discBoxHeight = discLines.length * 4 + 14;
+const disclaimerText = 'MEDICAL DISCLAIMER: This AI-generated report is for research and educational purposes ONLY. It does NOT constitute medical advice, diagnosis, or treatment recommendation. Always consult a licensed dermatologist or healthcare professional for proper evaluation. Do not delay seeking professional medical advice based on this report.';
 
-  doc.setFillColor(254, 243, 199);
-  doc.setDrawColor(245, 158, 11);
-  doc.setLineWidth(0.5);
-  doc.roundedRect(M, y, CW, discBoxHeight, 3, 3, 'FD');
+// Calculate text dimensions
+const discLines = doc.splitTextToSize(disclaimerText, CW - 16);
+const lineHeight = 4.5;
+const textHeight = discLines.length * lineHeight;
+const boxPadding = 12;
+const boxHeight = textHeight + boxPadding;
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(7.5);
-  doc.setTextColor(146, 64, 14);
-  doc.text(discLines, M + 5, y + 7);
+// Draw disclaimer box
+doc.setFillColor(255, 251, 235);  // Light warm yellow background
+doc.setDrawColor(245, 158, 11);    // Amber/orange border
+doc.setLineWidth(0.8);
+doc.roundedRect(M, y, CW, boxHeight, 4, 4, 'FD');
+
+// Add title with warning icon
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(8);
+doc.setTextColor(180, 83, 9);  // Dark amber
+doc.text('⚠ MEDICAL DISCLAIMER', M + 8, y + 8);
+
+// Separator line
+doc.setDrawColor(245, 158, 11, 0.4);
+doc.setLineWidth(0.3);
+doc.line(M + 8, y + 11, W - M - 8, y + 11);
+
+// Disclaimer text
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(7.5);
+doc.setTextColor(120, 53, 15);  // Dark warm brown
+doc.text(discLines, M + 8, y + 17);
 
   // ═══════════════════════════════════════════════════════════
   // FOOTER

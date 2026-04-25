@@ -194,7 +194,7 @@ export default function ChatWidget({ predictedClass }: ChatWidgetProps) {
             bottom: '90px',
             right: '24px',
             width: '360px',
-            height: '500px',
+            height: 'min(500px, 60vh)',  
             background: '#ffffff',
             borderRadius: '20px',
             boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
