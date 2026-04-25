@@ -33,6 +33,8 @@ const KNOWLEDGE: Record<string, string> = {
   accuracy: 'The ensemble approach combines multiple models to improve accuracy and reduce individual model errors. The system was trained and validated on the HAM10000 dermatoscopy dataset.',
 };
 
+const CHAT_URL = 'https://rabia12345-dermai.hf.space/chat';
+
 function getLocalResponse(message: string, context?: string): string {
   const lower = message.toLowerCase();
 
@@ -108,11 +110,25 @@ export default function ChatWidget({ predictedClass }: ChatWidgetProps) {
     setMessages((prev) => [...prev, { role: 'user', text }]);
     setSending(true);
 
-    await new Promise((r) => setTimeout(r, 400));
-
-    const reply = getLocalResponse(text, predictedClass);
-    setMessages((prev) => [...prev, { role: 'ai', text: reply }]);
-    setSending(false);
+    try {
+      const res = await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          context: predictedClass ?? 'general skin disease assistant',
+        }),
+      });
+      if (!res.ok) throw new Error(`${res.status}`);
+      const data = await res.json();
+      const reply = data.response ?? getLocalResponse(text, predictedClass);
+      setMessages((prev) => [...prev, { role: 'ai', text: reply }]);
+    } catch {
+      const reply = getLocalResponse(text, predictedClass);
+      setMessages((prev) => [...prev, { role: 'ai', text: reply }]);
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
