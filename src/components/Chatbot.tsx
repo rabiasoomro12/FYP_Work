@@ -50,8 +50,12 @@ function getLocalResponse(message: string, context?: string): string {
     return 'DermAI is an AI-powered skin disease classifier that uses an ensemble of 4 deep learning models (EfficientNet-B0, B3, MobileNetV3, ResNet-50) trained on the HAM10000 dataset to classify 7 types of skin lesions. It also provides Grad-CAM visualizations and downloadable reports.';
   }
 
+  const SHORT_KEYS = new Set(['mel', 'bcc', 'bkl', 'akiec', 'df', 'nv', 'vasc']);
   for (const [keyword, response] of Object.entries(KNOWLEDGE)) {
-    if (lower.includes(keyword)) return response;
+    const pattern = SHORT_KEYS.has(keyword)
+      ? new RegExp(`\\b${keyword}\\b`, 'i')
+      : lower.includes(keyword);
+    if (typeof pattern === 'boolean' ? pattern : pattern.test(lower)) return response;
   }
 
   if (context) {
