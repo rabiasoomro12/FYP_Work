@@ -234,66 +234,78 @@ export async function generatePatientReport(data: PatientReportData) {
   y += 26;
 
   // ═══════════════════════════════════════════════════════════
-  // DIAGNOSIS CARD
+// DIAGNOSIS CARD - Fixed Alignment
+// ═══════════════════════════════════════════════════════════
+doc.setFillColor(15, 23, 42);
+doc.roundedRect(M, y, CW, 30, 3, 3, 'F');
+
+// Column widths
+const col1W = 75;   // Condition badge
+const col2W = 50;   // Confidence
+const col3W = 42;   // Risk
+
+// Column headers
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(7);
+doc.setTextColor(148, 163, 184);
+doc.text('CONDITION', M + 8, y + 7);
+doc.text('CONFIDENCE', M + col1W + 8, y + 7);
+doc.text('RISK', W - M - col3W + 8, y + 7);
+
+// Condition badge - Left
+doc.setFillColor(...riskRgb);
+doc.roundedRect(M + 6, y + 10, col1W - 6, 11, 2, 2, 'F');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(9);
+doc.setTextColor(255, 255, 255);
+doc.text(`${data.predictedClass.toUpperCase()} - ${data.predictedLabel}`, M + col1W / 2, y + 17, { align: 'center' });
+
+// Confidence - Center
+doc.setTextColor(255, 255, 255);
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(18);
+doc.text(`${(data.confidence * 100).toFixed(1)}%`, M + col1W + col2W / 2, y + 17, { align: 'center' });
+
+// Risk badge - Right
+doc.setFillColor(255, 255, 255);
+doc.roundedRect(W - M - col3W, y + 10, col3W - 6, 11, 2, 2, 'F');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(8);
+doc.setTextColor(...riskRgb);
+doc.text(data.risk.toUpperCase(), W - M - col3W / 2, y + 17, { align: 'center' });
+
+y += 36;
+
   // ═══════════════════════════════════════════════════════════
-  doc.setFillColor(15, 23, 42);
-  doc.roundedRect(M, y, CW, 28, 3, 3, 'F');
+// CONDITION EXPLANATION
+// ═══════════════════════════════════════════════════════════
+y = checkPageBreak(doc, y, 60, H);
 
-  // Condition badge
-  doc.setFillColor(...riskRgb);
-  doc.roundedRect(M + 5, y + 4, 62, 10, 2, 2, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.setTextColor(255, 255, 255);
-  doc.text(`${data.predictedClass.toUpperCase()} - ${data.predictedLabel}`, M + 36, y + 10.5, { align: 'center' });
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(9);
+doc.setTextColor(0, 0, 0);
+doc.text('CONDITION EXPLANATION', M, y);
+y += 3;
+doc.setDrawColor(13, 148, 136);
+doc.setLineWidth(0.4);
+doc.line(M, y, M + CW, y);
+y += 7;
 
-  // Confidence
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(7);
-  doc.text('Confidence', M + 72, y + 6);
-  doc.setFontSize(16);
-  doc.text(`${(data.confidence * 100).toFixed(1)}%`, M + 72, y + 20);
+const explanationLines = doc.splitTextToSize(conditionInfo.explanation, CW - 16); // More padding
+const lineHeight = 5.5;  // Better line spacing
+const expBoxHeight = explanationLines.length * lineHeight + 14;
 
-  // Risk level
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(W - M - 42, y + 4, 37, 10, 2, 2, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.setTextColor(...riskRgb);
-  doc.text(`RISK: ${data.risk.toUpperCase()}`, W - M - 23.5, y + 10.5, { align: 'center' });
+doc.setFillColor(240, 253, 250);
+doc.setDrawColor(13, 148, 136, 0.3);
+doc.setLineWidth(0.5);
+doc.roundedRect(M, y - 2, CW, expBoxHeight, 3, 3, 'FD');
 
-  y += 34;
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(8.5);
+doc.setTextColor(30, 41, 59);  // Darker text for readability
+doc.text(explanationLines, M + 8, y + 6);  // More left padding
 
-  // ═══════════════════════════════════════════════════════════
-  // CONDITION EXPLANATION
-  // ═══════════════════════════════════════════════════════════
-  y = checkPageBreak(doc, y, 40, H);
-  
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.setTextColor(0, 0, 0);
-  doc.text('CONDITION EXPLANATION', M, y);
-  y += 3;
-  doc.setDrawColor(13, 148, 136);
-  doc.setLineWidth(0.4);
-  doc.line(M, y, M + CW, y);
-  y += 6;
-
-  const explanationLines = doc.splitTextToSize(conditionInfo.explanation, CW - 8);
-  const expBoxHeight = explanationLines.length * 5 + 12;
-  
-  doc.setFillColor(240, 253, 250);
-  doc.setDrawColor(13, 148, 136, 0.2);
-  doc.roundedRect(M, y - 2, CW, expBoxHeight, 3, 3, 'FD');
-  
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
-  doc.setTextColor(0, 0, 0);
-  doc.text(explanationLines, M + 4, y + 5);
-  
-  y += expBoxHeight + 8;
-
+y += expBoxHeight + 10;
   // ═══════════════════════════════════════════════════════════
   // RECOMMENDED GUIDELINES
   // ═══════════════════════════════════════════════════════════
