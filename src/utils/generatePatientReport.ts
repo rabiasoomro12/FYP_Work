@@ -322,22 +322,32 @@ y += expBoxHeight + 10;
 
   const allPrecautions = [...conditionInfo.precautions, ...GENERAL_PRECAUTIONS];
   
-  for (const precaution of allPrecautions) {
+  allPrecautions.forEach((precaution, index) => {
     y = checkPageBreak(doc, y, 8, H);
-    
+
     const bulletLines = doc.splitTextToSize(precaution, CW - 10);
-    
+
     // Bullet point
     doc.setFillColor(13, 148, 136);
-    doc.circle(M + 3, y + 2, 1.5, 'F');
-    
+    doc.circle(M + 3, y + 2.5, 1.8, 'F');
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(0, 0, 0);
-    doc.text(bulletLines, M + 7, y + 4.5);
-    
+    doc.text(bulletLines, M + 8, y + 5);
+
     y += bulletLines.length * 4.5 + 4;
-  }
+
+    // After condition-specific precautions, add a sub-header for general tips
+    if (index === conditionInfo.precautions.length - 1) {
+      y += 3;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text('GENERAL SKIN HEALTH TIPS', M + 8, y);
+      y += 5;
+    }
+  });
 
   y += 5;
 
