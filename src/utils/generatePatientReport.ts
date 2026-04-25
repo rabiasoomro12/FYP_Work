@@ -40,7 +40,7 @@ const CONDITION_EXPLANATIONS: Record<string, { explanation: string; precautions:
       'Schedule an urgent appointment with a dermatologist (ideally within 1-2 weeks)',
       'Avoid all sun exposure and tanning beds — use SPF 50+ broad-spectrum sunscreen daily',
       'Perform full-body skin checks monthly and document any changes with photographs',
-      'Do NOT attempt to remove, freeze, or apply any creams to the lesion yourself',
+      'Do not attempt to remove, freeze, or apply any creams to the lesion yourself',
       'Keep the affected area clean, dry, and protected from irritation or friction',
       'Inform your doctor of any personal or family history of skin cancer',
     ],
@@ -173,7 +173,7 @@ export async function generatePatientReport(data: PatientReportData) {
   
   // Logo circle
   doc.setFillColor(13, 148, 136);
-  doc.circle(M + 5, 16, 5, 'F');
+  doc.circle(M + 2, y + 3, 1.5, 'F');
   
   // Brand name
   doc.setFont('helvetica', 'bold');
@@ -276,7 +276,7 @@ doc.text(data.risk.toUpperCase(), W - M - col3W / 2, y + 17, { align: 'center' }
 
 y += 36;
 
-  // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // CONDITION EXPLANATION
 // ═══════════════════════════════════════════════════════════
 y = checkPageBreak(doc, y, 60, H);
@@ -291,65 +291,89 @@ doc.setLineWidth(0.4);
 doc.line(M, y, M + CW, y);
 y += 7;
 
-const explanationLines = doc.splitTextToSize(conditionInfo.explanation, CW - 16); // More padding
-const lineHeight = 5.5;  // Better line spacing
-const expBoxHeight = explanationLines.length * lineHeight + 14;
+const explanationLines = doc.splitTextToSize(conditionInfo.explanation, CW - 12);
+const lineHeight = 5.5;                                          // More line spacing
+const expBoxHeight = explanationLines.length * lineHeight + 16;  // More bottom padding
 
+// Box with visible border
 doc.setFillColor(240, 253, 250);
-doc.setDrawColor(13, 148, 136, 0.3);
-doc.setLineWidth(0.5);
+doc.setDrawColor(13, 148, 136, 0.5);
+doc.setLineWidth(0.6);
 doc.roundedRect(M, y - 2, CW, expBoxHeight, 3, 3, 'FD');
 
 doc.setFont('helvetica', 'normal');
 doc.setFontSize(8.5);
-doc.setTextColor(30, 41, 59);  // Darker text for readability
-doc.text(explanationLines, M + 8, y + 6);  // More left padding
+doc.setTextColor(30, 41, 59);
+doc.text(explanationLines, M + 8, y + 6);  // More left and top padding
 
-y += expBoxHeight + 10;
-  // ═══════════════════════════════════════════════════════════
-  // RECOMMENDED GUIDELINES
-  // ═══════════════════════════════════════════════════════════
-  y = checkPageBreak(doc, y, 30, H);
-  
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.setTextColor(0, 0, 0);
-  doc.text('RECOMMENDED GUIDELINES', M, y);
-  y += 3;
-  doc.setDrawColor(13, 148, 136);
-  doc.line(M, y, M + CW, y);
-  y += 7;
+y += expBoxHeight + 8;
 
-  const allPrecautions = [...conditionInfo.precautions, ...GENERAL_PRECAUTIONS];
-  
-  allPrecautions.forEach((precaution, index) => {
+// ═══════════════════════════════════════════════════════════
+// RECOMMENDED GUIDELINES
+// ═══════════════════════════════════════════════════════════
+y = checkPageBreak(doc, y, 30, H);
+
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(9);
+doc.setTextColor(0, 0, 0);
+doc.text('RECOMMENDED GUIDELINES', M, y);
+y += 3;
+doc.setDrawColor(13, 148, 136);
+doc.line(M, y, M + CW, y);
+y += 7;
+
+// Specific Precautions
+for (let i = 0; i < conditionInfo.precautions.length; i++) {
     y = checkPageBreak(doc, y, 8, H);
-
-    const bulletLines = doc.splitTextToSize(precaution, CW - 10);
-
-    // Bullet point
+    
+    const bulletLines = doc.splitTextToSize(conditionInfo.precautions[i], CW - 14);
+    
+    // Green bullet
     doc.setFillColor(13, 148, 136);
-    doc.circle(M + 3, y + 2.5, 1.8, 'F');
+    doc.circle(M + 2, y + 3, 1.5, 'F');
 
+
+    
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
-    doc.setTextColor(0, 0, 0);
-    doc.text(bulletLines, M + 8, y + 5);
+    doc.setTextColor(30, 41, 59);
+    doc.text(bulletLines, M + 7, y + 4);
 
+    
     y += bulletLines.length * 4.5 + 4;
+}
 
-    // After condition-specific precautions, add a sub-header for general tips
-    if (index === conditionInfo.precautions.length - 1) {
-      y += 3;
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(7.5);
-      doc.setTextColor(100, 116, 139);
-      doc.text('GENERAL SKIN HEALTH TIPS', M + 8, y);
-      y += 5;
-    }
-  });
+// General Tips separator
+y = checkPageBreak(doc, y, 12, H);  // ← ADD THIS LINE
+y += 3;
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(7.5);
+doc.setTextColor(100, 116, 139);
+doc.text('GENERAL SKIN HEALTH TIPS', M, y);
+y += 5;
 
-  y += 5;
+
+// General Precautions
+for (const precaution of GENERAL_PRECAUTIONS) {
+    y = checkPageBreak(doc, y, 8, H);
+    
+    const bulletLines = doc.splitTextToSize(precaution, CW - 14);
+    
+    // Gray bullet
+    doc.setFillColor(148, 163, 184);
+    doc.circle(M + 2, y + 3, 1.5, 'F');
+
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(30, 41, 59);
+   doc.text(bulletLines, M + 7, y + 4);
+
+    
+    y += bulletLines.length * 4.5 + 4;
+}
+
+y += 3;
 
   // ═══════════════════════════════════════════════════════════
   // PROBABILITY DISTRIBUTION
