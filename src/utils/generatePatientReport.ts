@@ -461,37 +461,37 @@ export async function generatePatientReport(data: PatientReportData) {
 // ═══════════════════════════════════════════════════════════
 y = checkPageBreak(doc, y, 40, H);
 
-const disclaimerText = 'MEDICAL DISCLAIMER: This AI-generated report is for research and educational purposes ONLY. It does NOT constitute medical advice, diagnosis, or treatment recommendation. Always consult a licensed dermatologist or healthcare professional for proper evaluation. Do not delay seeking professional medical advice based on this report.';
-
+const disclaimerText = 'MEDICAL DISCLAIMER: This AI-generated report is for research and educational purposes only. It does not constitute medical advice or diagnosis. Always consult a licensed dermatologist for proper evaluation and treatment.';
 // Calculate text dimensions
+// In your disclaimer section, update these values:
 const discLines = doc.splitTextToSize(disclaimerText, CW - 16);
-const lineHeight = 4.5;
+const lineHeight = 4;           // Reduced from 4.5
 const textHeight = discLines.length * lineHeight;
-const boxPadding = 12;
+const boxPadding = 10;           // Reduced from 12
 const boxHeight = textHeight + boxPadding;
 
 // Draw disclaimer box
-doc.setFillColor(255, 251, 235);  // Light warm yellow background
-doc.setDrawColor(245, 158, 11);    // Amber/orange border
+doc.setFillColor(255, 251, 235);
+doc.setDrawColor(245, 158, 11);
 doc.setLineWidth(0.8);
 doc.roundedRect(M, y, CW, boxHeight, 4, 4, 'FD');
 
-// Add title with warning icon
+// Title
 doc.setFont('helvetica', 'bold');
-doc.setFontSize(8);
-doc.setTextColor(180, 83, 9);  // Dark amber
-doc.text('⚠ MEDICAL DISCLAIMER', M + 8, y + 8);
+doc.setFontSize(7.5);            // Slightly smaller
+doc.setTextColor(180, 83, 9);
+doc.text('⚠ MEDICAL DISCLAIMER', M + 8, y + 7);
 
-// Separator line
+// Separator
 doc.setDrawColor(245, 158, 11, 0.4);
 doc.setLineWidth(0.3);
-doc.line(M + 8, y + 11, W - M - 8, y + 11);
+doc.line(M + 8, y + 10, W - M - 8, y + 10);
 
-// Disclaimer text
+// Text
 doc.setFont('helvetica', 'normal');
-doc.setFontSize(7.5);
-doc.setTextColor(120, 53, 15);  // Dark warm brown
-doc.text(discLines, M + 8, y + 17);
+doc.setFontSize(7);              // Smaller font
+doc.setTextColor(120, 53, 15);
+doc.text(discLines, M + 8, y + 15);
 
   // ═══════════════════════════════════════════════════════════
   // FOOTER
@@ -502,9 +502,9 @@ doc.text(discLines, M + 8, y + 17);
   doc.line(M, footerY, W - M, footerY);
   
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(6.5);
-  doc.setTextColor(148, 163, 184);
-  doc.text('DermAI • Sukkur IBA University', M, footerY + 5);
+  doc.setFontSize(8.5);
+  doc.setTextColor(0, 0, 0);
+  doc.text('DermAI • Final Year Project - CSE-VIII', M, footerY + 5);
   doc.text(`Generated: ${new Date().toLocaleString()}`, W - M, footerY + 5, { align: 'right' });
 
   // Save
