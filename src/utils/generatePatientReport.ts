@@ -385,10 +385,10 @@ export async function generatePatientReport(data: PatientReportData) {
 
   y += 6;
 
-  // ═══════════════════════════════════════════════════════════
-  // IMAGES
-  // ═══════════════════════════════════════════════════════════
-  if (data.previewUrl || data.gradcamUrl) {
+// ═══════════════════════════════════════════════════════════
+// IMAGES
+// ═══════════════════════════════════════════════════════════
+if (data.previewUrl || data.gradcamUrl) {
     y = checkPageBreak(doc, y, 75, H);
     
     doc.setFont('helvetica', 'bold');
@@ -408,8 +408,9 @@ export async function generatePatientReport(data: PatientReportData) {
       data.gradcamUrl ? urlToDataUrl(data.gradcamUrl) : Promise.resolve(null),
     ]);
 
-    // Left image
-    if (origData) {
+    // Both images present - side by side
+    if (origData && gcData) {
+      // Left image
       doc.addImage(origData, 'JPEG', M, y, imgW, imgH, undefined, 'FAST');
       doc.setDrawColor(226, 232, 240);
       doc.setLineWidth(0.3);
@@ -422,16 +423,8 @@ export async function generatePatientReport(data: PatientReportData) {
       doc.setFontSize(6);
       doc.setTextColor(255, 255, 255);
       doc.text('ORIGINAL', M + 10, y + 5.5, { align: 'center' });
-      
-      // Caption
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      doc.setTextColor(0, 0, 0);
-      doc.text('Original Image', M + imgW / 2, y + imgH + 4, { align: 'center' });
-    }
 
-    // Right image
-    if (gcData) {
+      // Right image
       doc.addImage(gcData, 'JPEG', M + imgW + 6, y, imgW, imgH, undefined, 'FAST');
       doc.setDrawColor(226, 232, 240);
       doc.setLineWidth(0.3);
@@ -444,12 +437,39 @@ export async function generatePatientReport(data: PatientReportData) {
       doc.setFontSize(6);
       doc.setTextColor(255, 255, 255);
       doc.text('GRAD-CAM', M + imgW + 16, y + 5.5, { align: 'center' });
-      
-      // Caption
+
+      // Captions centered under each image
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(7);
       doc.setTextColor(0, 0, 0);
-      doc.text('Grad-CAM Heatmap', M + imgW + 6 + imgW / 2, y + imgH + 4, { align: 'center' });
+      doc.text('Original Image', M + imgW / 2, y + imgH + 5, { align: 'center' });
+      doc.text('Grad-CAM Heatmap', M + imgW + 6 + imgW / 2, y + imgH + 5, { align: 'center' });
+    }
+    // Only one image - center it
+    else if (origData || gcData) {
+      const singleImg = origData || gcData!;
+      const label = origData ? 'ORIGINAL' : 'GRAD-CAM';
+      const caption = origData ? 'Original Image' : 'Grad-CAM Heatmap';
+      const centerX = M + CW / 2 - imgW / 2; // Center the image
+      
+      doc.addImage(singleImg, 'JPEG', centerX, y, imgW, imgH, undefined, 'FAST');
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.3);
+      doc.rect(centerX, y, imgW, imgH);
+      
+      // Badge
+      doc.setFillColor(0, 0, 0, 0.7);
+      doc.roundedRect(centerX + 2, y + 2, 16, 5, 1, 1, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6);
+      doc.setTextColor(255, 255, 255);
+      doc.text(label, centerX + 10, y + 5.5, { align: 'center' });
+      
+      // Centered caption
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor(0, 0, 0);
+      doc.text(caption, W / 2, y + imgH + 5, { align: 'center' });
     }
 
     y += imgH + 10;

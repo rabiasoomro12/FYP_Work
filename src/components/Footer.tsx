@@ -1,7 +1,15 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Activity } from 'lucide-react';
 
 export default function Footer() {
+  const navigate = useNavigate();
+
+  const handleNavClick = (path: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="border-t border-slate-200 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -21,7 +29,14 @@ export default function Footer() {
             <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Navigation</h4>
             <div className="flex flex-col gap-2">
               {[['/', 'Home'], ['/classifier', 'Classifier'], ['/encyclopedia', 'Encyclopedia'], ['/models', 'Model Comparison'], ['/methodology', 'Methodology'], ['/about', 'About']].map(([to, label]) => (
-                <Link key={to} to={to} className="text-sm text-slate-500 hover:text-teal-600 transition-colors">{label}</Link>
+                <a
+                  key={to}
+                  href={to}
+                  onClick={handleNavClick(to)}
+                  className="text-sm text-slate-500 hover:text-teal-600 transition-colors cursor-pointer"
+                >
+                  {label}
+                </a>
               ))}
             </div>
           </div>
