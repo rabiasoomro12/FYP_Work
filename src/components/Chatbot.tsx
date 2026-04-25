@@ -4,22 +4,22 @@ import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
 import { ChatMessage } from '../types';
 
 const KNOWLEDGE: Record<string, string> = {
-  melanoma: 'Melanoma (mel) is the most dangerous type of skin cancer. It develops from melanocytes and can spread to other organs. Early detection is critical — look for asymmetry, irregular borders, multiple colors, diameter >6mm, and evolving changes (the ABCDEs).',
-  mel: 'Melanoma (mel) is the most dangerous type of skin cancer. It develops from melanocytes and can spread to other organs. Early detection is critical — look for asymmetry, irregular borders, multiple colors, diameter >6mm, and evolving changes (the ABCDEs).',
-  bcc: 'Basal Cell Carcinoma (bcc) is the most common skin cancer. It rarely spreads but can cause local tissue damage if untreated. Appears as a pearly bump, flat scar-like lesion, or bleeding sore. Highly treatable when caught early.',
-  'basal cell': 'Basal Cell Carcinoma (bcc) is the most common skin cancer. It rarely spreads but can cause local tissue damage if untreated. Appears as a pearly bump, flat scar-like lesion, or bleeding sore. Highly treatable when caught early.',
-  akiec: 'Actinic Keratosis (akiec) is a pre-cancerous rough, scaly patch caused by years of sun exposure. It can progress to squamous cell carcinoma if left untreated. Treatment includes cryotherapy, topical creams, or photodynamic therapy.',
-  'actinic': 'Actinic Keratosis (akiec) is a pre-cancerous rough, scaly patch caused by years of sun exposure. It can progress to squamous cell carcinoma if left untreated. Treatment includes cryotherapy, topical creams, or photodynamic therapy.',
-  bkl: 'Benign Keratosis (bkl) includes seborrheic keratoses — harmless, waxy, wart-like growths that appear with age. They are not cancerous and do not require treatment unless they are bothersome.',
-  'benign keratosis': 'Benign Keratosis (bkl) includes seborrheic keratoses — harmless, waxy, wart-like growths that appear with age. They are not cancerous and do not require treatment unless they are bothersome.',
-  df: 'Dermatofibroma (df) is a benign skin growth that appears as a small, firm bump, usually on the legs. It is harmless and typically does not require treatment unless it causes discomfort.',
-  dermatofibroma: 'Dermatofibroma (df) is a benign skin growth that appears as a small, firm bump, usually on the legs. It is harmless and typically does not require treatment unless it causes discomfort.',
-  nv: 'Melanocytic Nevus (nv) is a common mole — a benign cluster of pigmented cells. Most are harmless, but monitor for changes in size, shape, or color. Use the ABCDE rule; consult a dermatologist if you notice changes.',
-  mole: 'Melanocytic Nevus (nv) is a common mole — a benign cluster of pigmented cells. Most are harmless, but monitor for changes in size, shape, or color. Use the ABCDE rule; consult a dermatologist if you notice changes.',
-  nevus: 'Melanocytic Nevus (nv) is a common mole — a benign cluster of pigmented cells. Most are harmless, but monitor for changes in size, shape, or color. Use the ABCDE rule; consult a dermatologist if you notice changes.',
-  vasc: 'Vascular Lesion (vasc) includes benign blood vessel abnormalities like hemangiomas and angiomas. Most are harmless. Hemangiomas in infants usually shrink over time.',
-  vascular: 'Vascular Lesion (vasc) includes benign blood vessel abnormalities like hemangiomas and angiomas. Most are harmless. Hemangiomas in infants usually shrink over time.',
-  treatment: 'Treatment depends on the specific condition. Benign lesions (nv, df, bkl, vasc) typically need no treatment. Actinic keratosis (akiec) can be treated with cryotherapy or topical creams. Skin cancers (mel, bcc) require surgical removal, and sometimes radiation or immunotherapy.',
+  melanoma: 'Melanoma is the most dangerous type of skin cancer. It develops from melanocytes and can spread to other organs. Early detection is critical — look for asymmetry, irregular borders, multiple colors, diameter >6mm, and evolving changes (the ABCDEs).',
+  mel: 'Melanoma is the most dangerous type of skin cancer. It develops from melanocytes and can spread to other organs. Early detection is critical — look for asymmetry, irregular borders, multiple colors, diameter >6mm, and evolving changes (the ABCDEs).',
+  bcc: 'Basal Cell Carcinoma is the most common skin cancer. It rarely spreads but can cause local tissue damage if untreated. Appears as a pearly bump, flat scar-like lesion, or bleeding sore. Highly treatable when caught early.',
+  'basal cell': 'Basal Cell Carcinoma is the most common skin cancer. It rarely spreads but can cause local tissue damage if untreated. Appears as a pearly bump, flat scar-like lesion, or bleeding sore. Highly treatable when caught early.',
+  akiec: 'Actinic Keratosis is a pre-cancerous rough, scaly patch caused by years of sun exposure. It can progress to squamous cell carcinoma if left untreated. Treatment includes cryotherapy, topical creams, or photodynamic therapy.',
+  actinic: 'Actinic Keratosis is a pre-cancerous rough, scaly patch caused by years of sun exposure. It can progress to squamous cell carcinoma if left untreated. Treatment includes cryotherapy, topical creams, or photodynamic therapy.',
+  bkl: 'Benign Keratosis includes seborrheic keratoses — harmless, waxy, wart-like growths that appear with age. They are not cancerous and do not require treatment unless they are bothersome.',
+  'benign keratosis': 'Benign Keratosis includes seborrheic keratoses — harmless, waxy, wart-like growths that appear with age. They are not cancerous and do not require treatment unless they are bothersome.',
+  df: 'Dermatofibroma is a benign skin growth that appears as a small, firm bump, usually on the legs. It is harmless and typically does not require treatment unless it causes discomfort.',
+  dermatofibroma: 'Dermatofibroma is a benign skin growth that appears as a small, firm bump, usually on the legs. It is harmless and typically does not require treatment unless it causes discomfort.',
+  nv: 'Melanocytic Nevus is a common mole — a benign cluster of pigmented cells. Most are harmless, but monitor for changes in size, shape, or color. Use the ABCDE rule; consult a dermatologist if you notice changes.',
+  mole: 'Melanocytic Nevus is a common mole — a benign cluster of pigmented cells. Most are harmless, but monitor for changes in size, shape, or color. Use the ABCDE rule; consult a dermatologist if you notice changes.',
+  nevus: 'Melanocytic Nevus is a common mole — a benign cluster of pigmented cells. Most are harmless, but monitor for changes in size, shape, or color. Use the ABCDE rule; consult a dermatologist if you notice changes.',
+  vasc: 'Vascular Lesion includes benign blood vessel abnormalities like hemangiomas and angiomas. Most are harmless. Hemangiomas in infants usually shrink over time.',
+  vascular: 'Vascular Lesion includes benign blood vessel abnormalities like hemangiomas and angiomas. Most are harmless. Hemangiomas in infants usually shrink over time.',
+  treatment: 'Treatment depends on the specific condition. Benign lesions (Melanocytic Nevus, Dermatofibroma, Benign Keratosis, Vascular Lesion) typically need no treatment. Actinic Keratosis can be treated with cryotherapy or topical creams. Skin cancers (Melanoma, Basal Cell Carcinoma) require surgical removal, and sometimes radiation or immunotherapy.',
   prevention: 'Skin cancer prevention tips: (1) Apply broad-spectrum SPF 30+ sunscreen daily, (2) Avoid tanning beds, (3) Wear protective clothing and hats, (4) Seek shade between 10am–4pm, (5) Perform monthly self-skin checks, (6) Get annual dermatologist exams.',
   sunscreen: 'Use a broad-spectrum sunscreen with SPF 30 or higher. Apply 15 minutes before sun exposure and reapply every 2 hours, or after swimming or sweating. Sunscreen is one of the best defenses against skin cancer.',
   symptoms: 'Common warning signs include: a sore that does not heal, a spot that bleeds or itches, a mole that changes in size/shape/color, a new growth, or a lesion with irregular borders. Use the ABCDE rule for moles: Asymmetry, Border, Color, Diameter, Evolving.',
@@ -35,13 +35,45 @@ const KNOWLEDGE: Record<string, string> = {
 
 const CHAT_URL = 'https://rabia12345-dermai.hf.space/chat';
 
+const CLASS_NAMES: Record<string, string> = {
+  mel: 'Melanoma',
+  bcc: 'Basal Cell Carcinoma',
+  akiec: 'Actinic Keratosis',
+  bkl: 'Benign Keratosis',
+  df: 'Dermatofibroma',
+  nv: 'Melanocytic Nevus',
+  vasc: 'Vascular Lesion',
+};
+
+function fullName(cls?: string): string {
+  if (!cls) return '';
+  return CLASS_NAMES[cls.toLowerCase()] ?? cls;
+}
+
+// Helper function to replace short codes with full names in text
+function expandShortCodes(text: string): string {
+  let expanded = text;
+  // Sort by key length (longest first) to avoid partial replacements
+  const sortedKeys = Object.keys(CLASS_NAMES).sort((a, b) => b.length - a.length);
+  
+  for (const shortCode of sortedKeys) {
+    const fullName = CLASS_NAMES[shortCode];
+    // Only replace standalone short codes (surrounded by word boundaries, spaces, or punctuation)
+    const regex = new RegExp(`(?<![a-zA-Z])${shortCode}(?![a-zA-Z])`, 'gi');
+    expanded = expanded.replace(regex, fullName);
+  }
+  
+  return expanded;
+}
+
 function getLocalResponse(message: string, context?: string): string {
   const lower = message.toLowerCase();
 
   if (/(hello|hi|hey|greet)/i.test(lower)) {
-    return context
-      ? `Hi! I can help you understand more about **${context}** or answer general skin disease questions. What would you like to know?`
+    const response = context
+      ? `Hi! I can help you understand more about **${fullName(context)}** or answer general skin disease questions. What would you like to know?`
       : 'Hello! I\'m the DermAI Assistant. I can answer questions about skin conditions, symptoms, prevention, and how DermAI works. What would you like to know?';
+    return expandShortCodes(response);
   }
 
   if (/(thank|thanks|great|awesome|perfect)/i.test(lower)) {
@@ -52,23 +84,37 @@ function getLocalResponse(message: string, context?: string): string {
     return 'DermAI is an AI-powered skin disease classifier that uses an ensemble of 4 deep learning models (EfficientNet-B0, B3, MobileNetV3, ResNet-50) trained on the HAM10000 dataset to classify 7 types of skin lesions. It also provides Grad-CAM visualizations and downloadable reports.';
   }
 
+  // Check for specific condition keywords
   const SHORT_KEYS = new Set(['mel', 'bcc', 'bkl', 'akiec', 'df', 'nv', 'vasc']);
+  
   for (const [keyword, response] of Object.entries(KNOWLEDGE)) {
-    const pattern = SHORT_KEYS.has(keyword)
-      ? new RegExp(`\\b${keyword}\\b`, 'i')
-      : lower.includes(keyword);
-    if (typeof pattern === 'boolean' ? pattern : pattern.test(lower)) return response;
+    let matches = false;
+    
+    if (SHORT_KEYS.has(keyword)) {
+      // For short codes, match only standalone (not part of other words)
+      const pattern = new RegExp(`\\b${keyword}\\b`, 'i');
+      matches = pattern.test(lower);
+    } else {
+      matches = lower.includes(keyword);
+    }
+    
+    if (matches) {
+      // Expand any short codes in the response
+      return expandShortCodes(response);
+    }
   }
 
   if (context) {
     const contextResponse = KNOWLEDGE[context.toLowerCase()];
     if (contextResponse) {
-      return `Based on your scan result (${context}): ${contextResponse}\n\nFor specific medical advice, please consult a qualified dermatologist.`;
+      const response = `Based on your scan result (${fullName(context)}): ${contextResponse}\n\nFor specific medical advice, please consult a qualified dermatologist.`;
+      return expandShortCodes(response);
     }
-    return `You were diagnosed with **${context}**. I don't have detailed information on that specific variant right now, but I recommend consulting a dermatologist for a professional evaluation. Is there something specific you'd like to know?`;
+    const response = `You were diagnosed with **${fullName(context)}**. I don't have detailed information on that specific variant right now, but I recommend consulting a dermatologist for a professional evaluation. Is there something specific you'd like to know?`;
+    return expandShortCodes(response);
   }
 
-  return 'I can help with questions about skin conditions (melanoma, BCC, actinic keratosis, moles, etc.), prevention tips, Grad-CAM explanations, and how DermAI works. Could you rephrase your question or ask about a specific condition?';
+  return 'I can help with questions about skin conditions (Melanoma, Basal Cell Carcinoma, Actinic Keratosis, moles, etc.), prevention tips, Grad-CAM explanations, and how DermAI works. Could you rephrase your question or ask about a specific condition?';
 }
 
 interface ChatWidgetProps {
@@ -93,7 +139,7 @@ export default function ChatWidget({ predictedClass }: ChatWidgetProps) {
         ...prev,
         {
           role: 'ai',
-          text: `I can see your image was analyzed and detected as "${predictedClass}". Feel free to ask me anything about this condition!`,
+          text: `I can see your image was analyzed and detected as "${fullName(predictedClass)}". Feel free to ask me anything about this condition!`,
         },
       ]);
     }
@@ -122,7 +168,8 @@ export default function ChatWidget({ predictedClass }: ChatWidgetProps) {
       if (!res.ok) throw new Error(`${res.status}`);
       const data = await res.json();
       const reply = data.response ?? getLocalResponse(text, predictedClass);
-      setMessages((prev) => [...prev, { role: 'ai', text: reply }]);
+      // Expand short codes in API responses too
+      setMessages((prev) => [...prev, { role: 'ai', text: expandShortCodes(reply) }]);
     } catch {
       const reply = getLocalResponse(text, predictedClass);
       setMessages((prev) => [...prev, { role: 'ai', text: reply }]);
@@ -184,7 +231,7 @@ export default function ChatWidget({ predictedClass }: ChatWidgetProps) {
               </p>
               <p style={{ color: '#94a3b8', fontSize: '12px', margin: 0 }}>
                 {predictedClass
-                  ? `Discussing: ${predictedClass}`
+                  ? `Discussing: ${fullName(predictedClass)}`
                   : 'Ask about any skin condition'}
               </p>
             </div>
