@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Menu, X, LogOut, User, ShieldCheck } from 'lucide-react';
+import { Menu, X, LogOut, User, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+
+// IMPORT THE LOGO ASSET (Assuming it is at this path)
+import logoImg from '../assets/dermai.PNG';
 
 const NAV_LINKS = [
   { to: '/', label: 'Home' },
-  { to: '/classifier', label: 'Smart Scan' },
-  { to: '/encyclopedia', label: 'Disease Library' },
-  { to: '/models', label: 'Models' },
+  { to: '/classifier', label: 'Smart Scan' }, 
+  { to: '/encyclopedia', label: 'Lesion Guide' },
+  { to: '/models', label: 'AI Metrics' },
   { to: '/methodology', label: 'How it Works' },
   { to: '/about', label: 'About' },
 ];
@@ -18,41 +21,34 @@ interface NavbarProps { onAuthClick: () => void; }
 export default function Navbar({ onAuthClick }: NavbarProps) {
   const { user, role, signOut } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  // Scroll to top on navigation
-  const handleNavClick = (path: string) => {
-    navigate(path);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setMobileOpen(false);
-  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all duration-300">
-      {/* Subtle top accent line */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-500" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          
-          {/* Logo Section */}
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-600 to-teal-400 flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform duration-300">
-              <Activity className="text-white" size={18} />
+          <Link to="/" className="flex items-center gap-2.5 group">
+            {/* LOGO CONTAINER: Changed background to white to match the logo. overflow-hidden handles the crop. */}
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg shadow-black/5 overflow-hidden border border-slate-100 group-hover:rotate-6 transition-transform duration-300 p-0.5">
+              {/* THE IMAGE: scale-[2.5] enlarges the logo to focus the center and push the empty sides outside the container boundaries. */}
+              <img 
+                src={logoImg} 
+                alt="DermAI Logo" 
+                className="w-full h-full object-contain scale-[2.5] transform-gpu" 
+              />
             </div>
             <span className="font-extrabold text-slate-800 tracking-tight text-xl">
               Derm<span className="bg-gradient-to-r from-teal-600 to-emerald-500 bg-clip-text text-transparent">AI</span>
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map(({ to, label }) => {
               const active = location.pathname === to;
               return (
                 <Link key={to} to={to}
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                   className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     active 
                       ? 'text-teal-700 bg-teal-50/80 shadow-sm' 
@@ -65,15 +61,11 @@ export default function Navbar({ onAuthClick }: NavbarProps) {
             })}
           </div>
 
-          {/* User Actions */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-3">
                 {role === 'doctor' && (
-                  <Link to="/admin"
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-100"
-                  >
+                  <Link to="/admin" className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-100">
                     <ShieldCheck size={13} /> Admin
                   </Link>
                 )}
@@ -96,30 +88,22 @@ export default function Navbar({ onAuthClick }: NavbarProps) {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button className="md:hidden text-slate-500 hover:text-slate-800 p-2 rounded-lg bg-slate-50" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            exit={{ opacity: 0, y: -10 }}
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
             className="md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-lg"
           >
             <div className="px-4 py-4 flex flex-col gap-2">
               {NAV_LINKS.map(({ to, label }) => (
-                <Link key={to} to={to}
-                  onClick={() => handleNavClick(to)}
+                <Link key={to} to={to} onClick={() => setMobileOpen(false)}
                   className={`px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
-                    location.pathname === to 
-                      ? 'text-teal-700 bg-teal-50' 
-                      : 'text-slate-600 hover:bg-slate-50'
+                    location.pathname === to ? 'text-teal-700 bg-teal-50' : 'text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   {label}

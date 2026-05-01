@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Activity } from 'lucide-react';
+
+// IMPORT THE LOGO ASSET
+import logoImg from '../assets/dermai.PNG';
 
 export default function Footer() {
   return (
@@ -10,8 +12,14 @@ export default function Footer() {
           {/* Brand & Mission */}
           <div>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-500 to-teal-400 flex items-center justify-center shadow-lg shadow-teal-900/20">
-                <Activity size={16} className="text-white" />
+              {/* LOGO CONTAINER: Set background to white to match the PNG, rounded-xl, and shadow. overflow-hidden handles the crop. */}
+              <div className="w-10 h-10 rounded-xl bg-white border border-slate-700/50 flex items-center justify-center shadow-xl shadow-teal-900/10 overflow-hidden p-0.5">
+                {/* THE IMAGE: scale-[2.5] focuses the center and pushes the empty sides outside the container boundaries. object-contain keeps aspect true. */}
+                <img 
+                  src={logoImg} 
+                  alt="DermAI Logo" 
+                  className="w-full h-full object-contain scale-[2.5] transform-gpu" 
+                />
               </div>
               <span className="font-extrabold text-white text-lg tracking-tight">
                 Derm<span className="text-teal-400">AI</span>
