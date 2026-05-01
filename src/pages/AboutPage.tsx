@@ -49,7 +49,7 @@ const SUPERVISORS = [
   {
     name: 'Dr. Umair Ayaz Kamagar',
     title: 'Internal Examiner',
-    role: 'FYP Coordinator & Lecturer, Computer Systems Engineering',
+    role: 'FYP Coordinator & Lecturer, CSE',
     org: 'Sukkur IBA University',
     img: umairImg
   },
