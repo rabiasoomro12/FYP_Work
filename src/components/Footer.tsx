@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-// IMPORT THE LOGO ASSET WITH CORRECT CASING
+// IMPORT THE LOGO ASSET (Must now match .png casing)
 import logoImg from '../assets/dermai.png';
 
 export default function Footer() {
@@ -14,7 +14,7 @@ export default function Footer() {
             <div className="flex items-center gap-2.5 mb-4">
               {/* LOGO CONTAINER: Set background to white, rounded-xl, and shadow. overflow-hidden handles the crop. */}
               <div className="w-10 h-10 rounded-xl bg-white border border-slate-700/50 flex items-center justify-center shadow-xl shadow-teal-900/10 overflow-hidden p-0.5">
-                {/* THE IMAGE: scale-[2.5] focuses the center and removes empty sides. object-contain keeps the aspect ratio true. transform-gpu uses the graphics processor for smoother scaling. */}
+                {/* THE IMAGE: object-contain keeps the aspect ratio. scale-250 focuses the center and removes empty sides. transform-gpu uses the graphics processor for smoother scaling. */}
                 <img 
                   src={logoImg} 
                   alt="DermAI Logo" 

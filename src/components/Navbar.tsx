@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, LogOut, User, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-// IMPORT THE LOGO ASSET WITH CORRECT CASING
+// IMPORT THE LOGO ASSET (Must now match .png casing)
 import logoImg from '../assets/dermai.png';
 
 const NAV_LINKS = [
@@ -30,9 +30,9 @@ export default function Navbar({ onAuthClick }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2.5 group">
-            {/* LOGO CONTAINER: Changed background to white to match the PNG. overflow-hidden handles the crop. */}
+            {/* LOGO CONTAINER: Changed background from placeholder gradient to white. overflow-hidden handles the crop. */}
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg shadow-black/5 overflow-hidden border border-slate-100 group-hover:rotate-6 transition-transform duration-300 p-0.5">
-              {/* THE IMAGE: scale-[2.5] enlarges the logo to focus the center and push the empty sides outside the container boundaries. */}
+              {/* THE IMAGE: object-contain keeps the aspect ratio. scale-250 focuses the center graphic and crops sides. */}
               <img 
                 src={logoImg} 
                 alt="DermAI Logo" 
