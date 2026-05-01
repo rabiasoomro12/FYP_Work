@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 // IMPORT THE LOGO ASSET WITH CORRECT CASING
-import logoImg from '../assets/dermai.PNG';
+import logoImg from '../assets/dermai.png';
 
 export default function Footer() {
   return (

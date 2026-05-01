@@ -5,7 +5,7 @@ import { Menu, X, LogOut, User, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 // IMPORT THE LOGO ASSET WITH CORRECT CASING
-import logoImg from '../assets/dermai.PNG';
+import logoImg from '../assets/dermai.png';
 
 const NAV_LINKS = [
   { to: '/', label: 'Home' },
