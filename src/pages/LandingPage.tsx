@@ -49,7 +49,7 @@ export default function LandingPage({ onAuthClick }: Props) {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-teal-50 border border-teal-200 rounded-full text-xs text-teal-700 font-bold mb-8 shadow-sm"
           >
             <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
-            Final Year Project BE – VIII CSE • Batch: Spring 2022 – Fall 2026 • Sukkur IBA University
+            FYP BE VIII CSE Spring 2021 - Sukkur IBA University
           </motion.div>
 
           <motion.h1 custom={1} variants={fadeUp} initial="hidden" animate="show"
