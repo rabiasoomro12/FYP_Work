@@ -51,7 +51,11 @@ async function callModel(file: File, modelName: string): Promise<ModelPrediction
   form.append('file', file);
   form.append('model', modelName);
   const res = await fetch(`${HF_BASE}/predict`, { method: 'POST', body: form });
-  if (!res.ok) throw new Error(`Model ${modelName} failed: ${res.status}`);
+  if (!res.ok) {
+  let message = `Model ${modelName} failed: ${res.status}`;
+  try { const e = await res.json(); if (e.detail) message = e.detail; } catch {}
+  throw new Error(message);
+}
   const data = await res.json();
   // predicted_class comes as "mel - Melanoma" → extract abbreviation
   const predicted_class = extractAbbrev(data.predicted_class ?? '');
@@ -65,7 +69,13 @@ async function ensemblePredict(file: File) {
   const models = ['efficientnet_b0', 'efficientnet_b3', 'mobilenet_v3', 'resnet50'];
   const results = await Promise.allSettled(models.map((m) => callModel(file, m)));
   const successful = results.filter((r): r is PromiseFulfilledResult<ModelPrediction> => r.status === 'fulfilled').map((r) => r.value);
-  if (successful.length === 0) throw new Error('All models failed to respond.');
+if (successful.length === 0) {
+  const reasons = results
+    .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+    .map((r) => (r.reason as Error)?.message ?? '');
+  const unique = [...new Set(reasons)];
+  throw new Error(unique.length === 1 ? unique[0] : 'All models failed to respond.');
+}
   const averaged: Record<string, number> = {};
   for (const cls of CLASSES) {
     const vals = successful.map((p) => p.probabilities?.[cls] ?? 0);
