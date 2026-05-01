@@ -39,9 +39,27 @@ const TEAM = [
 ];
 
 const SUPERVISORS = [
-  { name: 'Dr. Abdul Sattar Chan', title: 'Project Supervisor', org: 'Head of Department, Computer Systems Engineering — Sukkur IBA University', img: sattarImg },
-  { name: 'Dr. Umair Ayaz Kamagar', title: 'Internal Examiner', org: 'FYP Coordinator & Lecturer, Computer Systems Engineering — Sukkur IBA University', img: umairImg },
-  { name: 'Engr. Kashif Mujeeb', title: 'Industrial Supervisor', org: 'Assistant Manager Data Science & AI — United Bank Limited (UBL)', img: kashifImg },
+  {
+    name: 'Dr. Abdul Sattar Chan',
+    title: 'Project Supervisor',
+    role: 'Head of Department, Computer Systems Engineering',
+    org: 'Sukkur IBA University',
+    img: sattarImg
+  },
+  {
+    name: 'Dr. Umair Ayaz Kamagar',
+    title: 'Internal Examiner',
+    role: 'FYP Coordinator & Lecturer, Computer Systems Engineering',
+    org: 'Sukkur IBA University',
+    img: umairImg
+  },
+  {
+    name: 'Engr. Kashif Mujeeb',
+    title: 'Industrial Supervisor',
+    role: 'Assistant Manager Data Science & AI',
+    org: 'United Bank Limited (UBL)',
+    img: kashifImg
+  },
 ];
 
 const TECH_STACK = [
@@ -149,7 +167,10 @@ export default function AboutPage() {
                 <h3 className="font-bold text-slate-900 text-lg mb-1">{s.name}</h3>
                 <p className="text-sm font-bold text-teal-600 mb-3">{s.title}</p>
                 <div className="h-px w-12 bg-slate-200 mx-auto mb-3 group-hover:w-20 transition-all"></div>
-                <p className="text-xs text-slate-900 font-semibold leading-relaxed px-2">{s.org}</p>
+                <div className="text-xs text-slate-900 font-semibold leading-relaxed px-2 space-y-1">
+                <p className="text-slate-700">{s.role}</p>
+                <p className="text-slate-500">{s.org}</p>
+</div>
               </motion.div>
             ))}
           </div>
