@@ -67,15 +67,14 @@ export default function AboutPage() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12 flex flex-col items-center">
           <div className="relative mb-6">
             <div className="absolute inset-0 bg-teal-100 rounded-full scale-125 blur-2xl opacity-50"></div>
-            {/* INCREASED SIZE & REDUCED PADDING FOR CSE LOGO */}
             <div className="relative inline-flex items-center justify-center w-32 h-32 rounded-3xl bg-white shadow-xl overflow-hidden border-2 border-white p-1 z-10">
               <img src={cseLogo} alt="CSE Logo" className="w-full h-full object-contain scale-110" />
             </div>
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Sukkur IBA University</h1>
-          <p className="text-slate-600 text-sm mb-5 max-w-xl">Department of Computer Systems Engineering · Final Year Project 2026[cite: 1]</p>
-          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-teal-50 border border-teal-200 rounded-full text-sm text-teal-700 font-semibold shadow-inner">
-            <Award size={16} /> DermAI — Deep Learning-based Skin Disease Classification System[cite: 1]
+          <p className="text-slate-700 text-sm mb-5 max-w-xl font-medium">Department of Computer Systems Engineering · Final Year Project 2026</p>
+          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-teal-50 border border-teal-200 rounded-full text-sm text-teal-700 font-bold shadow-inner">
+            <Award size={16} /> DermAI — Deep Learning-based Skin Disease Classification System
           </div>
         </motion.div>
 
@@ -86,17 +85,17 @@ export default function AboutPage() {
               <Zap className="text-teal-300" size={24} /> Project Overview
             </h2>
             <p className="text-teal-50 leading-relaxed text-lg mb-4">
-              DermAI is a high-performance skin disease classification system developed at Sukkur IBA University[cite: 1]. 
-              The system leverages transfer learning on the <strong>HAM10000 dataset</strong>, processing over <strong>10,000+ dermoscopic images</strong> across 7 clinically significant lesion classes[cite: 1].
+              DermAI is a high-performance skin disease classification system developed at Sukkur IBA University. 
+              The system leverages transfer learning on the <strong>HAM10000 dataset</strong>, processing over <strong>10,000+ dermoscopic images</strong> across 7 clinically significant lesion classes.
             </p>
             <div className="flex flex-wrap gap-4 mt-6">
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-1 min-w-[200px]">
-                <p className="text-teal-200 text-xs uppercase tracking-wider font-bold mb-1">Ensemble Accuracy</p>
-                <p className="text-white text-3xl font-black">91%[cite: 1]</p>
+                <p className="text-teal-100 text-xs uppercase tracking-wider font-bold mb-1">Ensemble Accuracy</p>
+                <p className="text-white text-3xl font-black">91%</p>
               </div>
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-1 min-w-[200px]">
-                <p className="text-teal-200 text-xs uppercase tracking-wider font-bold mb-1">Explainability</p>
-                <p className="text-white text-xl font-bold italic">Grad-CAM Augmented[cite: 1]</p>
+                <p className="text-teal-100 text-xs uppercase tracking-wider font-bold mb-1">Explainability</p>
+                <p className="text-white text-xl font-bold italic">Grad-CAM Augmented</p>
               </div>
             </div>
           </div>
@@ -120,10 +119,11 @@ export default function AboutPage() {
                     <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
-                <h3 className="font-bold text-slate-800 text-lg mb-1">{m.name}</h3>
-                <p className="text-sm font-semibold text-teal-600 mb-3">{m.role}</p>
-                <div className="h-px w-12 bg-slate-100 mx-auto mb-3 group-hover:w-20 transition-all"></div>
-                <p className="text-xs text-slate-500 leading-relaxed px-2 h-10 flex items-center justify-center">{m.focus}</p>
+                <h3 className="font-bold text-slate-900 text-lg mb-1">{m.name}</h3>
+                <p className="text-sm font-bold text-teal-600 mb-3">{m.role}</p>
+                <div className="h-px w-12 bg-slate-200 mx-auto mb-3 group-hover:w-20 transition-all"></div>
+                {/* IMPROVED VISIBILITY FOR FOCUS TEXT */}
+                <p className="text-xs text-slate-700 font-medium leading-relaxed px-2 h-10 flex items-center justify-center">{m.focus}</p>
               </motion.div>
             ))}
           </div>
@@ -146,26 +146,26 @@ export default function AboutPage() {
                     <img src={s.img} alt={s.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
-                <h3 className="font-bold text-slate-800 text-lg mb-1">{s.name}</h3>
-                <p className="text-sm font-semibold text-teal-600 mb-3">{s.title}</p>
-                <div className="h-px w-12 bg-slate-100 mx-auto mb-3 group-hover:w-20 transition-all"></div>
-                <p className="text-xs text-slate-400 leading-relaxed px-2">{s.org}[cite: 1]</p>
+                <h3 className="font-bold text-slate-900 text-lg mb-1">{s.name}</h3>
+                <p className="text-sm font-bold text-teal-600 mb-3">{s.title}</p>
+                <div className="h-px w-12 bg-slate-200 mx-auto mb-3 group-hover:w-20 transition-all"></div>
+                {/* IMPROVED VISIBILITY FOR ORG TEXT */}
+                <p className="text-xs text-slate-600 font-medium leading-relaxed px-2">{s.org}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
-        {/* Technical Stack - COLORFUL ICONS */}
+        {/* Technical Stack */}
         <motion.div custom={9} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
           <h2 className="text-lg font-bold text-slate-800 mb-6 text-center md:text-left">Technical Stack</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {TECH_STACK.map((tech) => (
               <div key={tech.name} className="flex flex-col items-center justify-center bg-slate-50 border border-slate-100 rounded-2xl p-4 hover:bg-teal-50 hover:border-teal-100 hover:shadow-md hover:-translate-y-1 transition-all group">
-                {/* REMOVED GRAYSCALE FILTER */}
                 <div className="w-12 h-12 mb-3 flex items-center justify-center transition-all">
                   <img src={tech.img} alt={tech.name} className="max-w-full max-h-full object-contain" />
                 </div>
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight group-hover:text-teal-700">{tech.name}</span>
+                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tight group-hover:text-teal-700">{tech.name}</span>
               </div>
             ))}
           </div>
