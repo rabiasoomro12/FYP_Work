@@ -11,16 +11,16 @@ const fadeUp = {
 
 const STATS = [
   { value: '10,000+', label: 'Clinical Cases', icon: Database, color: 'bg-teal-50 text-teal-600 border-teal-100' },
-  { value: 'Quad-AI',  label: 'Ensemble Engine', icon: Brain,     color: 'bg-blue-50 text-blue-600 border-blue-100' },
-  { value: '7 Types',   label: 'Lesion Detection', icon: BarChart2, color: 'bg-violet-50 text-violet-600 border-violet-100' },
-  { value: '91%+',      label: 'Ensemble Accuracy', icon: Zap,      color: 'bg-amber-50 text-amber-600 border-amber-100' },
+  { value: 'Quad-AI',  label: 'Ensemble Engine', icon: Brain,    color: 'bg-blue-50 text-blue-600 border-blue-100' },
+  { value: '7 Types',  label: 'Lesion Detection', icon: BarChart2, color: 'bg-violet-50 text-violet-600 border-violet-100' },
+  { value: '91%+',     label: 'Ensemble Accuracy', icon: Zap,     color: 'bg-amber-50 text-amber-600 border-amber-100' },
 ];
 
 const FEATURES = [
-  { icon: Brain,    title: 'Advanced AI Screening',    desc: 'Powered by a state-of-the-art ensemble of 4 deep learning models to ensure maximum diagnostic precision and reliability.', color: 'bg-teal-50 text-teal-600' },
-  { icon: Activity, title: 'Visual Explainability', desc: 'See exactly what the AI sees. Our system highlights the specific regions of concern for complete transparency.', color: 'bg-blue-50 text-blue-600' },
-  { icon: Shield,   title: 'Clinical-Grade Insights',  desc: 'Receive comprehensive reports with full probability breakdowns and AI-generated medical summaries for every scan.', color: 'bg-emerald-50 text-emerald-600' },
-  { icon: BarChart2, title: 'Expert Consensus',       desc: 'The system uses "Soft-Voting" logic, combining the expertise of ResNet, MobileNet, and EfficientNet architectures.', color: 'bg-amber-50 text-amber-600' },
+  { icon: Brain,     title: 'Advanced AI Screening',   desc: 'Powered by a state-of-the-art ensemble of 4 deep learning models to ensure maximum diagnostic precision and reliability.', color: 'bg-teal-50 text-teal-600' },
+  { icon: Activity,  title: 'Visual Explainability',   desc: 'See exactly what the AI sees. Our system highlights the specific regions of concern for complete transparency.', color: 'bg-blue-50 text-blue-600' },
+  { icon: Shield,    title: 'Clinical-Grade Insights', desc: 'Receive comprehensive reports with full probability breakdowns and AI-generated medical summaries for every scan.', color: 'bg-emerald-50 text-emerald-600' },
+  { icon: BarChart2, title: 'Expert Consensus',        desc: 'The system uses "Soft-Voting" logic, combining the expertise of ResNet, MobileNet, and EfficientNet architectures.', color: 'bg-amber-50 text-amber-600' },
 ];
 
 const CLASSES = [
@@ -44,12 +44,12 @@ export default function LandingPage({ onAuthClick }: Props) {
 
         <div className="relative max-w-4xl mx-auto text-center">
 
-          {/* ✅ CHANGED: Badge text updated to FYP info */}
+          {/* Badge */}
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-teal-50 border border-teal-200 rounded-full text-xs text-teal-700 font-bold mb-8 shadow-sm"
           >
             <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
-            Final Year Project BE – VIII CSE • Batch: Spring 2021 – Fall 2025 • Sukkur IBA University
+            Final Year Project BE – VIII CSE • Batch: Spring 2022 – Fall 2026 • Sukkur IBA University
           </motion.div>
 
           <motion.h1 custom={1} variants={fadeUp} initial="hidden" animate="show"
@@ -67,7 +67,6 @@ export default function LandingPage({ onAuthClick }: Props) {
           </motion.p>
 
           <motion.div custom={3} variants={fadeUp} initial="hidden" animate="show" className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            {/* ✅ CHANGED: Button text updated to Scan Now */}
             <Link to="/classifier" className="flex items-center gap-2 px-8 py-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95 group">
               Scan Now <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
