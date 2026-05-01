@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ScanProvider } from './context/ScanContext';
 import Navbar from './components/Navbar';
@@ -14,12 +14,29 @@ import MethodologyPage from './pages/MethodologyPage';
 import AboutPage from './pages/AboutPage';
 import AdminPage from './pages/AdminPage';
 
+/**
+ * ScrollToTop Component
+ * Ensures the window scrolls to the top whenever the route changes.
+ */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function AppLayout() {
   const [authOpen, setAuthOpen] = useState(false);
-  const [predictedClass, setPredictedClass] = useState<string | undefined>(undefined);
+  const [predictedClass, setPredictedClass] = useState(undefined);
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
+      <ScrollToTop /> {/* Reset scroll position on route change */}
       <Navbar onAuthClick={() => setAuthOpen(true)} />
+      
       <main className="flex-1 pt-16">
         <Routes>
           <Route path="/" element={<LandingPage onAuthClick={() => setAuthOpen(true)} />} />
@@ -31,6 +48,7 @@ function AppLayout() {
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </main>
+
       <Footer />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
       <Chatbot predictedClass={predictedClass} />
