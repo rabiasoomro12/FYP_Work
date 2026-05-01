@@ -11,9 +11,9 @@ const fadeUp = {
 
 const STATS = [
   { value: '10,000+', label: 'Clinical Cases', icon: Database, color: 'bg-teal-50 text-teal-600 border-teal-100' },
-  { value: 'Quad-AI',  label: 'Ensemble Engine', icon: Brain,    color: 'bg-blue-50 text-blue-600 border-blue-100' },
+  { value: 'Quad-AI',  label: 'Ensemble Engine', icon: Brain,     color: 'bg-blue-50 text-blue-600 border-blue-100' },
   { value: '7 Types',   label: 'Lesion Detection', icon: BarChart2, color: 'bg-violet-50 text-violet-600 border-violet-100' },
-  { value: '91%+',     label: 'Ensemble Accuracy', icon: Zap,      color: 'bg-amber-50 text-amber-600 border-amber-100' },
+  { value: '91%+',      label: 'Ensemble Accuracy', icon: Zap,      color: 'bg-amber-50 text-amber-600 border-amber-100' },
 ];
 
 const FEATURES = [
@@ -29,43 +29,47 @@ const CLASSES = [
   { code: 'BCC',   name: 'Basal Cell Carcinoma', color: 'bg-orange-50 text-orange-700 border-orange-200' },
   { code: 'AKIEC', name: 'Actinic Keratosis',    color: 'bg-teal-50 text-teal-700 border-teal-200' },
   { code: 'BKL',   name: 'Benign Keratosis',     color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  { code: 'DF',    name: 'Dermatofibroma',       color: 'bg-slate-50 text-slate-700 border-slate-200' },
+  { code: 'DF',    name: 'Dermatofibroma',        color: 'bg-slate-50 text-slate-700 border-slate-200' },
   { code: 'VASC',  name: 'Vascular Lesion',      color: 'bg-pink-50 text-pink-700 border-pink-200' },
 ];
 
 export default function LandingPage({ onAuthClick }: Props) {
   return (
     <div className="overflow-x-hidden bg-white">
+
       {/* Hero Section */}
       <section className="relative pt-20 pb-24 px-4 overflow-hidden bg-gradient-to-br from-white via-teal-50/40 to-blue-50/30">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-100/30 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-100/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl pointer-events-none" />
-        
+
         <div className="relative max-w-4xl mx-auto text-center">
+
+          {/* ✅ CHANGED: Badge text updated to FYP info */}
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-teal-50 border border-teal-200 rounded-full text-xs text-teal-700 font-bold mb-8 shadow-sm"
           >
             <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
-            Trained on 10,000+ Medical Cases • 91%+ Ensemble Accuracy
+            Final Year Project BE – VIII CSE • Batch: Spring 2021 – Fall 2025 • Sukkur IBA University
           </motion.div>
-          
+
           <motion.h1 custom={1} variants={fadeUp} initial="hidden" animate="show"
             className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-6"
           >
             Derm<span className="text-teal-600">AI</span>
             <br />
-            <span className="text-3xl sm:text-4xl font-semibold text-slate-500">Advanced Skin Health Analysis</span>
+            <span className="text-3xl sm:text-4xl font-semibold text-slate-500">Intelligent Skin Health Analysis</span>
           </motion.h1>
 
           <motion.p custom={2} variants={fadeUp} initial="hidden" animate="show"
             className="text-lg text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            Get instant screening for 7 types of skin lesions using our high-precision Quad-AI technology. Fast, reliable, and designed for clinical-grade screening.
+            Leverage clinical-grade deep learning for instant lesion screening. High-precision results powered by multi-model ensemble technology.
           </motion.p>
 
           <motion.div custom={3} variants={fadeUp} initial="hidden" animate="show" className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            {/* ✅ CHANGED: Button text updated to Scan Now */}
             <Link to="/classifier" className="flex items-center gap-2 px-8 py-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95 group">
-              Start AI Assessment <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              Scan Now <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <button onClick={onAuthClick} className="flex items-center gap-2 px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-2xl transition-all border border-slate-200 shadow-sm">
               Create Free Account
@@ -117,7 +121,7 @@ export default function LandingPage({ onAuthClick }: Props) {
       <section className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-800 mb-4 text-gradient">Why Choose DermAI?</h2>
+            <h2 className="text-3xl font-bold text-slate-800 mb-4">Why Choose DermAI?</h2>
             <p className="text-slate-500 max-w-xl mx-auto text-sm">Building the future of dermatology at Sukkur IBA University by combining medical logic with high-performance engineering.</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -146,9 +150,9 @@ export default function LandingPage({ onAuthClick }: Props) {
             <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center mx-auto mb-8">
               <Activity size={32} className="text-white" />
             </div>
-            <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tight">Ready for your assessment?</h2>
+            <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tight">Ready for your scan?</h2>
             <p className="text-teal-100 mb-10 max-w-xl mx-auto text-md font-medium leading-relaxed">
-              Create an account to access complete diagnostic reports, visual heatmaps, and detailed AI insights powered by the Groq Llama-3 system.
+              Create an account to access complete diagnostic reports, visual heatmaps, and detailed AI insights powered by our ensemble system.
             </p>
             <div className="flex flex-col sm:flex-row gap-5 justify-center">
               <button onClick={onAuthClick} className="px-10 py-4 bg-white hover:bg-teal-50 text-teal-700 font-bold rounded-2xl transition-all shadow-lg active:scale-95">
@@ -161,6 +165,7 @@ export default function LandingPage({ onAuthClick }: Props) {
           </motion.div>
         </div>
       </section>
+
     </div>
   );
 }
