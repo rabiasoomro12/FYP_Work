@@ -27,7 +27,7 @@ const TEAM = [
 
 const SUPERVISORS = [
   { name: 'Dr. Abdul Sattar Chan', title: 'Project Supervisor', org: 'Head of Department, Computer Systems Engineering — Sukkur IBA University', img: sattarImg },
-  { name: 'Umair Ayaz Kamagar', title: 'Internal Examiner', org: 'FYP Coordinator & Lecturer, Computer Systems Engineering — Sukkur IBA University', img: umairImg },
+  { name: 'Dr. Umair Ayaz Kamagar', title: 'Internal Examiner', org: 'FYP Coordinator & Lecturer, Computer Systems Engineering — Sukkur IBA University', img: umairImg },
   { name: 'Engr. Kashif Mujeeb', title: 'Industrial Supervisor', org: 'Assistant Manager Data Science & AI — United Bank Limited (UBL)', img: kashifImg },
 ];
 
