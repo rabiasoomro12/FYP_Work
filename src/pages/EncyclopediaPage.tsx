@@ -207,17 +207,18 @@ export default function EncyclopediaPage() {
         </div>
 
         {/* FOOTNOTE */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-8 p-4 bg-white rounded-xl border border-slate-100 shadow-sm flex items-start gap-3 text-xs text-slate-400"
-        >
-          <span className="text-teal-600 mt-0.5">*</span>
-          <p>
-            Reference images are for educational purposes only and do not replace professional medical diagnosis.
-          </p>
-        </motion.div>
+        {/* FOOTNOTE */}
+<motion.div
+  initial={{ opacity: 0 }}
+  whileInView={{ opacity: 1 }}
+  viewport={{ once: true }}
+  className="mt-8 p-4 bg-yellow-50 rounded-xl border border-yellow-200 shadow-sm flex items-start gap-3 text-sm text-yellow-800 font-medium"
+>
+  <span className="text-yellow-700 mt-0.5 text-base font-bold">*</span>
+  <p>
+    Reference images are for educational purposes only and do not replace professional medical diagnosis.
+  </p>
+</motion.div>
 
       </div>
     </div>
