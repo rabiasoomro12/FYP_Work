@@ -74,16 +74,17 @@ export default function MethodologyPage() {
             </ResponsiveContainer>
           </motion.div>
 
+          {/* ✅ CHANGED: Vertical bar chart */}
           <motion.div custom={2} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">After Oversampling</p>
             <p className="text-xs text-slate-400 mb-5">Balanced to ~6,700 samples per class via augmentation</p>
             <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={BALANCED} layout="vertical" margin={{ left: 0, right: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
-                <XAxis type="number" tick={{ fill: '#94a3b8', fontSize: 11 }} domain={[0, 7000]} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-                <YAxis type="category" dataKey="name" tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'JetBrains Mono' }} width={45} />
+              <BarChart data={BALANCED} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'JetBrains Mono' }} />
+                <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} domain={[0, 7000]} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                 <Tooltip formatter={(v: number) => [v.toLocaleString(), 'Samples']} {...tooltipStyle} />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]}>{BALANCED.map((e, i) => <Cell key={i} fill={e.color} />)}</Bar>
+                <Bar dataKey="value" radius={[4, 4, 0, 0]}>{BALANCED.map((e, i) => <Cell key={i} fill={e.color} />)}</Bar>
               </BarChart>
             </ResponsiveContainer>
           </motion.div>
