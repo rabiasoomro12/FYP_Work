@@ -82,7 +82,8 @@ export default function AboutPage() {
         <motion.div custom={0} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-3xl p-8 mb-12 shadow-xl relative overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <_Zap className="text-teal-300" size={24} /> Project Overview
+              {/* FIXED: Removed the underscore from Zap */}
+              <Zap className="text-teal-300" size={24} /> Project Overview
             </h2>
             <p className="text-teal-50 leading-relaxed text-lg mb-4">
               DermAI is a high-performance skin disease classification system developed at Sukkur IBA University. 
@@ -122,7 +123,6 @@ export default function AboutPage() {
                 <h3 className="font-bold text-slate-900 text-lg mb-1">{m.name}</h3>
                 <p className="text-sm font-bold text-teal-600 mb-3">{m.role}</p>
                 <div className="h-px w-12 bg-slate-200 mx-auto mb-3 group-hover:w-20 transition-all"></div>
-                {/* DARKENED FOCUS TEXT */}
                 <p className="text-xs text-slate-900 font-semibold leading-relaxed px-2 h-10 flex items-center justify-center">{m.focus}</p>
               </motion.div>
             ))}
@@ -149,7 +149,6 @@ export default function AboutPage() {
                 <h3 className="font-bold text-slate-900 text-lg mb-1">{s.name}</h3>
                 <p className="text-sm font-bold text-teal-600 mb-3">{s.title}</p>
                 <div className="h-px w-12 bg-slate-200 mx-auto mb-3 group-hover:w-20 transition-all"></div>
-                {/* DARKENED ORG TEXT AS REQUESTED */}
                 <p className="text-xs text-slate-900 font-semibold leading-relaxed px-2">{s.org}</p>
               </motion.div>
             ))}
