@@ -172,15 +172,25 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
   return (
     <div className="min-h-screen py-10 px-4 bg-slate-50">
       <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm">
-              <FlaskConical size={18} className="text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-slate-800">Skin Lesion Classifier</h1>
-          </div>
-          <p className="text-slate-500 text-sm ml-12">Upload a dermoscopic image — ensemble of 4 deep learning models via HuggingFace API</p>
-        </motion.div>
+        <motion.div
+  initial={{ opacity: 0, y: 16 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="mb-8"
+>
+  <div className="flex items-center gap-3 mb-1">
+    <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm">
+      <FlaskConical size={18} className="text-white" />
+    </div>
+
+    <h1 className="text-2xl font-bold text-slate-800">
+      AI Skin Scan
+    </h1>
+  </div>
+
+  <p className="text-slate-500 text-sm ml-12">
+    Upload a skin image for an AI-powered assessment of possible skin conditions
+  </p>
+</motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Left column: upload + model votes */}
