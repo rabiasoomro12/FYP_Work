@@ -19,17 +19,16 @@ const fadeUp = {
   }) 
 };
 
-// WAQAR UPDATED AND ROLES REBALANCED
 const TEAM = [
   { name: 'Rabia Soomro', role: 'AI Developer', focus: 'Deep Learning · Model Training · Grad-CAM · HuggingFace', img: rabiaImg },
   { name: 'Nimerta Wadhwani', role: 'Full-Stack Developer', focus: 'React · Vite · Supabase · TypeScript · UI/UX', img: nimertaImg },
-  { name: 'Waqar Abbas Khan', role: 'Data Specialist & Researcher', focus: 'Dataset Preprocessing · Statistical Analysis · Research · Testing', img: waqarImg }, // Waqar's updated role
+  { name: 'Waqar Abbas Khan', role: 'Data Specialist & Researcher', focus: 'Dataset Preprocessing · Statistical Analysis · Research · Testing', img: waqarImg },
 ];
 
 const SUPERVISORS = [
-  { name: 'Dr. Abdul Sattar Chan', title: 'Project Supervisor', org: 'Head of Department, Computer Systems Engineering — Sukkur IBA University', img: sattarImg, badge: 'Supervisor', badgeCls: 'text-teal-700 bg-teal-50 border-teal-200' },
-  { name: 'Umair Ayaz Kamagar', title: 'Internal Examiner', org: 'FYP Coordinator & Lecturer, Computer Systems Engineering — Sukkur IBA University', img: umairImg, badge: 'Internal', badgeCls: 'text-blue-700 bg-blue-50 border-blue-200' },
-  { name: 'Engr. Kashif Mujeeb', title: 'Industrial Supervisor', org: 'Assistant Manager Data Science & AI — United Bank Limited (UBL)', img: kashifImg, badge: 'Industrial', badgeCls: 'text-orange-700 bg-orange-50 border-orange-200' },
+  { name: 'Dr. Abdul Sattar Chan', title: 'Project Supervisor', org: 'Head of Department, Computer Systems Engineering — Sukkur IBA University', img: sattarImg },
+  { name: 'Umair Ayaz Kamagar', title: 'Internal Examiner', org: 'FYP Coordinator & Lecturer, Computer Systems Engineering — Sukkur IBA University', img: umairImg },
+  { name: 'Engr. Kashif Mujeeb', title: 'Industrial Supervisor', org: 'Assistant Manager Data Science & AI — United Bank Limited (UBL)', img: kashifImg },
 ];
 
 export default function AboutPage() {
@@ -38,15 +37,12 @@ export default function AboutPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12 flex flex-col items-center">
-          
-          {/* HIGHLIGHTED LOGO CONTAINER (Inspired by image_2.png) */}
           <div className="relative mb-6">
             <div className="absolute inset-0 bg-teal-100 rounded-full scale-110 blur-xl opacity-60"></div>
             <div className="relative inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-white shadow-xl overflow-hidden border-2 border-white p-3 z-10">
               <img src={cseLogo} alt="CSE Logo" className="w-full h-full object-contain" />
             </div>
           </div>
-
           <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Sukkur IBA University</h1>
           <p className="text-slate-600 text-sm mb-5 max-w-xl">Department of Computer Systems Engineering · Final Year Project 2026</p>
           <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-teal-50 border border-teal-200 rounded-full text-sm text-teal-700 font-semibold shadow-inner">
@@ -89,14 +85,12 @@ export default function AboutPage() {
               <motion.div key={m.name} custom={i + 2} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
                 className="bg-white rounded-3xl p-7 text-center shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all group"
               >
-                {/* HIGHLIGHTED PHOTO CONTAINER (Inspired by image_3.png) */}
                 <div className="relative w-28 h-28 mx-auto mb-5">
                   <div className="absolute inset-0 rounded-3xl bg-teal-50 group-hover:bg-teal-100 group-hover:scale-105 transition-all"></div>
                   <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-md border-4 border-white z-10">
                     <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
-
                 <h3 className="font-bold text-slate-800 text-lg mb-1">{m.name}</h3>
                 <p className="text-sm font-semibold text-teal-600 mb-3">{m.role}</p>
                 <div className="h-px w-12 bg-slate-100 mx-auto mb-3 group-hover:w-20 transition-all"></div>
@@ -106,7 +100,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Supervisors Section */}
+        {/* Supervisors Section - CENTER ALIGNED */}
         <section className="mb-14">
           <motion.div custom={5} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm"><GraduationCap size={20} className="text-white" /></div>
@@ -115,17 +109,19 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {SUPERVISORS.map((s, i) => (
               <motion.div key={s.name} custom={i + 6} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
-                className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-lg transition-all"
+                className="bg-white rounded-3xl p-7 text-center shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all group"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-inner border-2 border-slate-50">
+                {/* HIGHLIGHTED PHOTO CONTAINER */}
+                <div className="relative w-28 h-28 mx-auto mb-5">
+                  <div className="absolute inset-0 rounded-3xl bg-teal-50 group-hover:bg-teal-100 group-hover:scale-105 transition-all"></div>
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-md border-4 border-white z-10">
                     <img src={s.img} alt={s.name} className="w-full h-full object-cover" />
                   </div>
-                  <span className={`text-[10px] uppercase tracking-widest font-black px-3 py-1 rounded-full border ${s.badgeCls}`}>{s.badge}</span>
                 </div>
-                <h3 className="font-bold text-slate-800 text-lg mb-0.5">{s.name}</h3>
+                <h3 className="font-bold text-slate-800 text-lg mb-1">{s.name}</h3>
                 <p className="text-sm font-semibold text-teal-600 mb-3">{s.title}</p>
-                <p className="text-xs text-slate-400 leading-relaxed">{s.org}</p>
+                <div className="h-px w-12 bg-slate-100 mx-auto mb-3 group-hover:w-20 transition-all"></div>
+                <p className="text-xs text-slate-400 leading-relaxed px-2">{s.org}</p>
               </motion.div>
             ))}
           </div>
