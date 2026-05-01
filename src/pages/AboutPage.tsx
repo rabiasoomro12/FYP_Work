@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Users, GraduationCap, Award, Zap } from 'lucide-react';
 
-// Import assets
+// Team & Institution Assets
 import cseLogo from '../assets/cse.png';
 import rabiaImg from '../assets/rabia.png';
 import nimertaImg from '../assets/nimerta.png';
@@ -9,6 +9,19 @@ import waqarImg from '../assets/waqar.png';
 import sattarImg from '../assets/sattar.jpg';
 import umairImg from '../assets/umair.jpg';
 import kashifImg from '../assets/kashif.png';
+
+// Tech Stack Assets
+import reactLogo from '../assets/react.png';
+import viteLogo from '../assets/vite.png';
+import tailwindLogo from '../assets/tailwind.png';
+import tsLogo from '../assets/typescript.png';
+import fastapiLogo from '../assets/fastapi.png';
+import pythonLogo from '../assets/python.png';
+import supabaseLogo from '../assets/supabase.png';
+import jspdfLogo from '../assets/jspdf.png';
+import pytorchLogo from '../assets/pytorch.png';
+import huggingfaceLogo from '../assets/huggingface.png';
+import vercelLogo from '../assets/vercel.png';
 
 const fadeUp = { 
   hidden: { opacity: 0, y: 20 }, 
@@ -31,10 +44,25 @@ const SUPERVISORS = [
   { name: 'Engr. Kashif Mujeeb', title: 'Industrial Supervisor', org: 'Assistant Manager Data Science & AI — United Bank Limited (UBL)', img: kashifImg },
 ];
 
+const TECH_STACK = [
+  { name: 'React', img: reactLogo },
+  { name: 'Vite', img: viteLogo },
+  { name: 'Tailwind CSS', img: tailwindLogo },
+  { name: 'TypeScript', img: tsLogo },
+  { name: 'FastAPI', img: fastapiLogo },
+  { name: 'Python', img: pythonLogo },
+  { name: 'Supabase', img: supabaseLogo },
+  { name: 'JsPDF', img: jspdfLogo },
+  { name: 'PyTorch', img: pytorchLogo },
+  { name: 'HuggingFace', img: huggingfaceLogo },
+  { name: 'Vercel', img: vercelLogo },
+];
+
 export default function AboutPage() {
   return (
     <div className="min-h-screen py-10 px-4 bg-slate-50">
       <div className="max-w-6xl mx-auto">
+        
         {/* Header Section */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12 flex flex-col items-center">
           <div className="relative mb-6">
@@ -100,7 +128,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Supervisors Section - CENTER ALIGNED */}
+        {/* Supervisors Section */}
         <section className="mb-14">
           <motion.div custom={5} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm"><GraduationCap size={20} className="text-white" /></div>
@@ -111,7 +139,6 @@ export default function AboutPage() {
               <motion.div key={s.name} custom={i + 6} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
                 className="bg-white rounded-3xl p-7 text-center shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all group"
               >
-                {/* HIGHLIGHTED PHOTO CONTAINER */}
                 <div className="relative w-28 h-28 mx-auto mb-5">
                   <div className="absolute inset-0 rounded-3xl bg-teal-50 group-hover:bg-teal-100 group-hover:scale-105 transition-all"></div>
                   <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-md border-4 border-white z-10">
@@ -127,13 +154,16 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Tech Stack */}
+        {/* Technical Stack with Logos */}
         <motion.div custom={9} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
-          <h2 className="text-lg font-bold text-slate-800 mb-6">Technical Stack</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {['PyTorch 2.0', 'EfficientNet', 'HAM10000', 'Grad-CAM', 'HuggingFace', 'React + Vite', 'Tailwind CSS', 'Supabase', 'Framer Motion', 'Recharts'].map((tech) => (
-              <div key={tech} className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-center text-xs font-bold text-slate-600 hover:bg-teal-50 hover:border-teal-100 hover:text-teal-700 hover:scale-105 transition-all cursor-default shadow-inner">
-                {tech}
+          <h2 className="text-lg font-bold text-slate-800 mb-6 text-center md:text-left">Technical Stack</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {TECH_STACK.map((tech) => (
+              <div key={tech.name} className="flex flex-col items-center justify-center bg-slate-50 border border-slate-100 rounded-2xl p-4 hover:bg-teal-50 hover:border-teal-100 hover:shadow-md hover:-translate-y-1 transition-all group">
+                <div className="w-12 h-12 mb-3 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all">
+                  <img src={tech.img} alt={tech.name} className="max-w-full max-h-full object-contain" />
+                </div>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight group-hover:text-teal-700">{tech.name}</span>
               </div>
             ))}
           </div>
