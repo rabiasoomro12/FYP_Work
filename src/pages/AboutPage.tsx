@@ -19,10 +19,11 @@ const fadeUp = {
   }) 
 };
 
+// WAQAR UPDATED AND ROLES REBALANCED
 const TEAM = [
   { name: 'Rabia Soomro', role: 'AI Developer', focus: 'Deep Learning · Model Training · Grad-CAM · HuggingFace', img: rabiaImg },
   { name: 'Nimerta Wadhwani', role: 'Full-Stack Developer', focus: 'React · Vite · Supabase · TypeScript · UI/UX', img: nimertaImg },
-  { name: 'Waqar Abbas Khan', role: 'Intern', focus: 'Dataset Preprocessing · Research · Testing', img: waqarImg },
+  { name: 'Waqar Abbas Khan', role: 'Data Specialist & Researcher', focus: 'Dataset Preprocessing · Statistical Analysis · Research · Testing', img: waqarImg }, // Waqar's updated role
 ];
 
 const SUPERVISORS = [
@@ -36,14 +37,20 @@ export default function AboutPage() {
     <div className="min-h-screen py-10 px-4 bg-slate-50">
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white mb-4 shadow-md overflow-hidden border border-slate-100 p-2">
-            <img src={cseLogo} alt="CSE Logo" className="w-full h-full object-contain" />
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12 flex flex-col items-center">
+          
+          {/* HIGHLIGHTED LOGO CONTAINER (Inspired by image_2.png) */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 bg-teal-100 rounded-full scale-110 blur-xl opacity-60"></div>
+            <div className="relative inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-white shadow-xl overflow-hidden border-2 border-white p-3 z-10">
+              <img src={cseLogo} alt="CSE Logo" className="w-full h-full object-contain" />
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-slate-800 mb-2">Sukkur IBA University</h1>
-          <p className="text-slate-500 text-sm mb-4">Department of Computer Systems Engineering · Final Year Project 2026</p>
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 border border-teal-200 rounded-full text-xs text-teal-700 font-semibold">
-            <Award size={13} /> DermAI — Deep Learning-based Skin Disease Classification System
+
+          <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Sukkur IBA University</h1>
+          <p className="text-slate-600 text-sm mb-5 max-w-xl">Department of Computer Systems Engineering · Final Year Project 2026</p>
+          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-teal-50 border border-teal-200 rounded-full text-sm text-teal-700 font-semibold shadow-inner">
+            <Award size={16} /> DermAI — Deep Learning-based Skin Disease Classification System
           </div>
         </motion.div>
 
@@ -75,20 +82,25 @@ export default function AboutPage() {
         <section className="mb-14">
           <motion.div custom={1} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm"><Users size={20} className="text-white" /></div>
-            <h2 className="text-2xl font-bold text-slate-800">Student Team</h2>
+            <h2 className="text-2xl font-bold text-slate-900">Student Team</h2>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {TEAM.map((m, i) => (
               <motion.div key={m.name} custom={i + 2} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
-                className="bg-white rounded-3xl p-6 text-center shadow-sm border border-slate-100 hover:shadow-md transition-shadow group"
+                className="bg-white rounded-3xl p-7 text-center shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all group"
               >
-                <div className="w-24 h-24 rounded-2xl overflow-hidden mx-auto mb-4 shadow-inner bg-slate-100 border-2 border-slate-50 group-hover:border-teal-500 transition-colors">
-                  <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
+                {/* HIGHLIGHTED PHOTO CONTAINER (Inspired by image_3.png) */}
+                <div className="relative w-28 h-28 mx-auto mb-5">
+                  <div className="absolute inset-0 rounded-3xl bg-teal-50 group-hover:bg-teal-100 group-hover:scale-105 transition-all"></div>
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-md border-4 border-white z-10">
+                    <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
+                  </div>
                 </div>
+
                 <h3 className="font-bold text-slate-800 text-lg mb-1">{m.name}</h3>
                 <p className="text-sm font-semibold text-teal-600 mb-3">{m.role}</p>
-                <div className="h-px w-12 bg-slate-100 mx-auto mb-3"></div>
-                <p className="text-xs text-slate-500 leading-relaxed px-2">{m.focus}</p>
+                <div className="h-px w-12 bg-slate-100 mx-auto mb-3 group-hover:w-20 transition-all"></div>
+                <p className="text-xs text-slate-500 leading-relaxed px-2 h-10 flex items-center justify-center">{m.focus}</p>
               </motion.div>
             ))}
           </div>
@@ -98,15 +110,15 @@ export default function AboutPage() {
         <section className="mb-14">
           <motion.div custom={5} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm"><GraduationCap size={20} className="text-white" /></div>
-            <h2 className="text-2xl font-bold text-slate-800">Supervisory Committee</h2>
+            <h2 className="text-2xl font-bold text-slate-900">Supervisory Committee</h2>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {SUPERVISORS.map((s, i) => (
               <motion.div key={s.name} custom={i + 6} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
-                className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+                className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-lg transition-all"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                  <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-inner border-2 border-slate-50">
                     <img src={s.img} alt={s.name} className="w-full h-full object-cover" />
                   </div>
                   <span className={`text-[10px] uppercase tracking-widest font-black px-3 py-1 rounded-full border ${s.badgeCls}`}>{s.badge}</span>
@@ -124,7 +136,7 @@ export default function AboutPage() {
           <h2 className="text-lg font-bold text-slate-800 mb-6">Technical Stack</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {['PyTorch 2.0', 'EfficientNet', 'HAM10000', 'Grad-CAM', 'HuggingFace', 'React + Vite', 'Tailwind CSS', 'Supabase', 'Framer Motion', 'Recharts'].map((tech) => (
-              <div key={tech} className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-center text-xs font-bold text-slate-600 hover:bg-teal-50 hover:border-teal-100 hover:text-teal-700 transition-all cursor-default">
+              <div key={tech} className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-center text-xs font-bold text-slate-600 hover:bg-teal-50 hover:border-teal-100 hover:text-teal-700 hover:scale-105 transition-all cursor-default shadow-inner">
                 {tech}
               </div>
             ))}
