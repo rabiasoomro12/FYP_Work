@@ -7,20 +7,20 @@ import rabiaImg from '../assets/rabia.png';
 import nimertaImg from '../assets/nimerta.png';
 import waqarImg from '../assets/waqar.png';
 import sattarImg from '../assets/sattar.jpg';
-import umairImg from '../assets/umair.jpg';
+import umairImg from '../assets/umair.jpg'; // Verified .jpg from your files
 import kashifImg from '../assets/kashif.png';
 
-// Tech Stack Assets
+// Tech Stack Assets - Extensions matched to your folder structure
 import reactLogo from '../assets/react.png';
 import viteLogo from '../assets/vite.png';
 import tailwindLogo from '../assets/tailwind.png';
 import tsLogo from '../assets/typescript.png';
 import fastapiLogo from '../assets/fastapi.png';
 import pythonLogo from '../assets/python.png';
-import supabaseLogo from '../assets/supabase.png';
+import supabaseLogo from '../assets/supabase.avif'; // Fixed to .avif
 import jspdfLogo from '../assets/jspdf.png';
 import pytorchLogo from '../assets/pytorch.png';
-import huggingfaceLogo from '../assets/huggingface.png';
+import huggingfaceLogo from '../assets/huggingface.jpg'; // Fixed to .jpg
 import vercelLogo from '../assets/vercel.png';
 
 const fadeUp = { 
@@ -85,8 +85,8 @@ export default function AboutPage() {
               <Zap className="text-teal-300" size={24} /> Project Overview
             </h2>
             <p className="text-teal-50 leading-relaxed text-lg mb-4">
-              DermAI is a high-performance skin disease classification system developed at Sukkur IBA University. 
-              The system leverages transfer learning on the <strong>HAM10000 dataset</strong>, processing over <strong>10,000+ dermoscopic images</strong> across 7 clinically significant lesion classes.
+              DermAI is a high-performance skin disease classification system developed at Sukkur IBA University[cite: 1]. 
+              The system leverages transfer learning on the <strong>HAM10000 dataset</strong>, processing over <strong>10,000+ dermoscopic images</strong> across 7 clinically significant lesion classes[cite: 1].
             </p>
             <div className="flex flex-wrap gap-4 mt-6">
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-1 min-w-[200px]">
@@ -154,7 +154,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Technical Stack with Logos */}
+        {/* Technical Stack with Fixed Logos */}
         <motion.div custom={9} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
           <h2 className="text-lg font-bold text-slate-800 mb-6 text-center md:text-left">Technical Stack</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
