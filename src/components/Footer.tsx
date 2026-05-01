@@ -22,10 +22,9 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Navigation */}
+          {/* Navigation — matched to navbar */}
           <div>
-            {/* ✅ White + highlighted */}
-            <h4 className="text-xs font-black text-white uppercase tracking-[0.15em] mb-5 bg-white/10 px-2 py-1 rounded-md inline-block">Navigation</h4>
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-[0.15em] mb-5">Navigation</h4>
             <div className="grid grid-cols-2 gap-y-3 gap-x-4">
               {[
                 ['/', 'Home'],
@@ -44,8 +43,7 @@ export default function Footer() {
 
           {/* Team */}
           <div>
-            {/* ✅ White + highlighted */}
-            <h4 className="text-xs font-black text-white uppercase tracking-[0.15em] mb-5 bg-white/10 px-2 py-1 rounded-md inline-block">Project Team</h4>
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-[0.15em] mb-5">Project Team</h4>
             <div className="flex flex-col gap-2 text-sm text-slate-300 font-bold">
               <span>Rabia Soomro</span>
               <span>Nimerta Wadhwani</span>
@@ -53,13 +51,11 @@ export default function Footer() {
 
               <div className="pt-4 mt-2 border-t border-slate-800 space-y-2">
                 <div className="flex flex-col">
-                  {/* ✅ White + highlighted */}
-                  <span className="text-[10px] text-white font-black uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-md inline-block w-fit mb-1">Academic Supervisor</span>
+                  <span className="text-[10px] text-slate-500 uppercase font-black">Academic Supervisor</span>
                   <span className="text-teal-400">Dr. Abdul Sattar Chan</span>
                 </div>
                 <div className="flex flex-col">
-                  {/* ✅ White + highlighted */}
-                  <span className="text-[10px] text-white font-black uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-md inline-block w-fit mb-1">Industrial Supervisor</span>
+                  <span className="text-[10px] text-slate-500 uppercase font-black">Industrial Supervisor</span>
                   <span className="text-teal-400">Engr. Kashif Mujeeb</span>
                 </div>
               </div>
@@ -67,10 +63,10 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Bar — centered, no tags */}
         <div className="mt-12 pt-8 border-t border-slate-800 flex justify-center">
           <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wider text-center">
-            © 2026 DermAI · Sukkur IBA University · Department of Computer Systems Engineering
+            © 2025 DermAI · Sukkur IBA University · Department of Computer Systems Engineering
           </p>
         </div>
       </div>
