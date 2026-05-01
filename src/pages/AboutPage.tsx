@@ -71,99 +71,101 @@ export default function AboutPage() {
               <img src={cseLogo} alt="CSE Logo" className="w-full h-full object-contain scale-110" />
             </div>
           </div>
-          <h1 className="text-4xl font-black text-slate-900 mb-2">Sukkur IBA University</h1>
-          <p className="text-slate-900 text-base mb-6 max-w-xl font-bold">Department of Computer Systems Engineering · Final Year Project 2026[cite: 1]</p>
-          <div className="inline-flex items-center gap-2.5 px-6 py-3 bg-teal-100 border-2 border-teal-600 rounded-full text-sm text-teal-900 font-black shadow-md">
-            <Award size={18} className="text-teal-700" /> DermAI — Deep Learning-based Skin Disease Classification System[cite: 1]
+          <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Sukkur IBA University</h1>
+          <p className="text-slate-700 text-sm mb-5 max-w-xl font-medium">Department of Computer Systems Engineering · Final Year Project 2026</p>
+          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-teal-50 border border-teal-200 rounded-full text-sm text-teal-700 font-bold shadow-inner">
+            <Award size={16} /> DermAI — Deep Learning-based Skin Disease Classification System
           </div>
         </motion.div>
 
         {/* Project Overview Card */}
-        <motion.div custom={0} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-gradient-to-br from-teal-700 to-teal-900 rounded-3xl p-10 mb-12 shadow-2xl relative overflow-hidden border-b-4 border-teal-950">
+        <motion.div custom={0} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-3xl p-8 mb-12 shadow-xl relative overflow-hidden">
           <div className="relative z-10">
-            <h2 className="text-2xl font-black text-white mb-4 flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
               <Zap className="text-teal-300" size={24} /> Project Overview
             </h2>
-            <p className="text-white leading-relaxed text-lg mb-6 font-medium">
-              DermAI is a high-performance skin disease classification system developed at Sukkur IBA University[cite: 1]. 
-              The system leverages transfer learning on the <strong>HAM10000 dataset</strong>, processing over <strong>10,000+ dermoscopic images</strong> across 7 clinically significant lesion classes[cite: 1].
+            <p className="text-teal-50 leading-relaxed text-lg mb-4">
+              DermAI is a high-performance skin disease classification system developed at Sukkur IBA University. 
+              The system leverages transfer learning on the <strong>HAM10000 dataset</strong>, processing over <strong>10,000+ dermoscopic images</strong> across 7 clinically significant lesion classes.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-              <div className="bg-white/10 backdrop-blur-xl border border-white/30 rounded-2xl p-5 flex flex-col justify-center">
-                <p className="text-teal-300 text-xs uppercase tracking-widest font-black mb-1">Ensemble Accuracy</p>
-                <p className="text-white text-4xl font-black">91%[cite: 1]</p>
+            <div className="flex flex-wrap gap-4 mt-6">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-1 min-w-[200px]">
+                <p className="text-teal-100 text-xs uppercase tracking-wider font-bold mb-1">Ensemble Accuracy</p>
+                <p className="text-white text-3xl font-black">91%</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-xl border border-white/30 rounded-2xl p-5 flex flex-col justify-center">
-                <p className="text-teal-300 text-xs uppercase tracking-widest font-black mb-1">Explainability</p>
-                <p className="text-white text-xl font-black italic">Grad-CAM Augmented[cite: 1]</p>
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-1 min-w-[200px]">
+                <p className="text-teal-100 text-xs uppercase tracking-wider font-bold mb-1">Explainability</p>
+                <p className="text-white text-xl font-bold italic">Grad-CAM Augmented</p>
               </div>
             </div>
           </div>
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-teal-400/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
         </motion.div>
 
         {/* Student Team Section */}
-        <section className="mb-16">
-          <motion.div custom={1} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center shadow-lg"><Users size={24} className="text-white" /></div>
-            <h2 className="text-3xl font-black text-slate-900">Student Team</h2>
+        <section className="mb-14">
+          <motion.div custom={1} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm"><Users size={20} className="text-white" /></div>
+            <h2 className="text-2xl font-bold text-slate-900">Student Team</h2>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {TEAM.map((m, i) => (
               <motion.div key={m.name} custom={i + 2} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
-                className="bg-white rounded-[2rem] p-8 text-center shadow-md border-2 border-slate-100 hover:border-teal-500 transition-all group"
+                className="bg-white rounded-3xl p-7 text-center shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all group"
               >
-                <div className="relative w-32 h-32 mx-auto mb-6">
-                  <div className="absolute inset-0 rounded-full bg-teal-100 group-hover:scale-110 transition-all"></div>
-                  <div className="relative w-full h-full rounded-full overflow-hidden shadow-xl border-4 border-white z-10">
+                <div className="relative w-28 h-28 mx-auto mb-5">
+                  <div className="absolute inset-0 rounded-3xl bg-teal-50 group-hover:bg-teal-100 group-hover:scale-105 transition-all"></div>
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-md border-4 border-white z-10">
                     <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
-                <h3 className="font-black text-slate-900 text-xl mb-1">{m.name}</h3>
-                <p className="text-sm font-black text-teal-700 mb-4 uppercase tracking-tighter">{m.role}</p>
-                <div className="h-1 w-16 bg-slate-900 mx-auto mb-4 rounded-full"></div>
-                <p className="text-[13px] text-slate-900 font-bold leading-tight px-2">{m.focus}</p>
+                <h3 className="font-bold text-slate-900 text-lg mb-1">{m.name}</h3>
+                <p className="text-sm font-bold text-teal-600 mb-3">{m.role}</p>
+                <div className="h-px w-12 bg-slate-200 mx-auto mb-3 group-hover:w-20 transition-all"></div>
+                {/* IMPROVED VISIBILITY FOR FOCUS TEXT */}
+                <p className="text-xs text-slate-700 font-medium leading-relaxed px-2 h-10 flex items-center justify-center">{m.focus}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
         {/* Supervisors Section */}
-        <section className="mb-16">
-          <motion.div custom={5} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center shadow-lg"><GraduationCap size={24} className="text-white" /></div>
-            <h2 className="text-3xl font-black text-slate-900">Supervisory Committee</h2>
+        <section className="mb-14">
+          <motion.div custom={5} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm"><GraduationCap size={20} className="text-white" /></div>
+            <h2 className="text-2xl font-bold text-slate-900">Supervisory Committee</h2>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {SUPERVISORS.map((s, i) => (
               <motion.div key={s.name} custom={i + 6} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
-                className="bg-white rounded-[2rem] p-8 text-center shadow-md border-2 border-slate-100 hover:border-teal-500 transition-all group"
+                className="bg-white rounded-3xl p-7 text-center shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all group"
               >
-                <div className="relative w-32 h-32 mx-auto mb-6">
-                  <div className="absolute inset-0 rounded-full bg-slate-100 group-hover:scale-110 transition-all"></div>
-                  <div className="relative w-full h-full rounded-full overflow-hidden shadow-xl border-4 border-white z-10">
+                <div className="relative w-28 h-28 mx-auto mb-5">
+                  <div className="absolute inset-0 rounded-3xl bg-teal-50 group-hover:bg-teal-100 group-hover:scale-105 transition-all"></div>
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-md border-4 border-white z-10">
                     <img src={s.img} alt={s.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
-                <h3 className="font-black text-slate-900 text-xl mb-1">{s.name}</h3>
-                <p className="text-sm font-black text-teal-700 mb-4 uppercase tracking-tighter">{s.title}</p>
-                <div className="h-1 w-16 bg-slate-900 mx-auto mb-4 rounded-full"></div>
-                <p className="text-[13px] text-slate-800 font-black leading-snug">{s.org}[cite: 1]</p>
+                <h3 className="font-bold text-slate-900 text-lg mb-1">{s.name}</h3>
+                <p className="text-sm font-bold text-teal-600 mb-3">{s.title}</p>
+                <div className="h-px w-12 bg-slate-200 mx-auto mb-3 group-hover:w-20 transition-all"></div>
+                {/* IMPROVED VISIBILITY FOR ORG TEXT */}
+                <p className="text-xs text-slate-600 font-medium leading-relaxed px-2">{s.org}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
         {/* Technical Stack */}
-        <motion.div custom={9} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-white rounded-[2.5rem] p-10 shadow-xl border-2 border-slate-200">
-          <h2 className="text-xl font-black text-slate-900 mb-8 text-center uppercase tracking-widest">Technical Stack</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <motion.div custom={9} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+          <h2 className="text-lg font-bold text-slate-800 mb-6 text-center md:text-left">Technical Stack</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {TECH_STACK.map((tech) => (
-              <div key={tech.name} className="flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-100 rounded-3xl p-5 hover:bg-white hover:border-teal-500 hover:shadow-xl transition-all group">
-                <div className="w-14 h-14 mb-4 flex items-center justify-center transition-all">
+              <div key={tech.name} className="flex flex-col items-center justify-center bg-slate-50 border border-slate-100 rounded-2xl p-4 hover:bg-teal-50 hover:border-teal-100 hover:shadow-md hover:-translate-y-1 transition-all group">
+                <div className="w-12 h-12 mb-3 flex items-center justify-center transition-all">
                   <img src={tech.img} alt={tech.name} className="max-w-full max-h-full object-contain" />
                 </div>
-                <span className="text-[11px] font-black text-slate-900 uppercase tracking-tighter group-hover:text-teal-700">{tech.name}</span>
+                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tight group-hover:text-teal-700">{tech.name}</span>
               </div>
             ))}
           </div>
