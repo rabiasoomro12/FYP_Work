@@ -7,20 +7,20 @@ import rabiaImg from '../assets/rabia.png';
 import nimertaImg from '../assets/nimerta.png';
 import waqarImg from '../assets/waqar.png';
 import sattarImg from '../assets/sattar.jpg';
-import umairImg from '../assets/umair.jpg'; // Verified .jpg from your files
+import umairImg from '../assets/umair.jpg';
 import kashifImg from '../assets/kashif.png';
 
-// Tech Stack Assets - Extensions matched to your folder structure
+// Tech Stack Assets
 import reactLogo from '../assets/react.png';
 import viteLogo from '../assets/vite.png';
 import tailwindLogo from '../assets/tailwind.png';
 import tsLogo from '../assets/typescript.png';
 import fastapiLogo from '../assets/fastapi.png';
 import pythonLogo from '../assets/python.png';
-import supabaseLogo from '../assets/supabase.avif'; // Fixed to .avif
+import supabaseLogo from '../assets/supabase.png';
 import jspdfLogo from '../assets/jspdf.png';
 import pytorchLogo from '../assets/pytorch.png';
-import huggingfaceLogo from '../assets/huggingface.jpg'; // Fixed to .jpg
+import huggingfaceLogo from '../assets/huggingface.png';
 import vercelLogo from '../assets/vercel.png';
 
 const fadeUp = { 
@@ -66,15 +66,16 @@ export default function AboutPage() {
         {/* Header Section */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12 flex flex-col items-center">
           <div className="relative mb-6">
-            <div className="absolute inset-0 bg-teal-100 rounded-full scale-110 blur-xl opacity-60"></div>
-            <div className="relative inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-white shadow-xl overflow-hidden border-2 border-white p-3 z-10">
-              <img src={cseLogo} alt="CSE Logo" className="w-full h-full object-contain" />
+            <div className="absolute inset-0 bg-teal-100 rounded-full scale-125 blur-2xl opacity-50"></div>
+            {/* INCREASED SIZE & REDUCED PADDING FOR CSE LOGO */}
+            <div className="relative inline-flex items-center justify-center w-32 h-32 rounded-3xl bg-white shadow-xl overflow-hidden border-2 border-white p-1 z-10">
+              <img src={cseLogo} alt="CSE Logo" className="w-full h-full object-contain scale-110" />
             </div>
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Sukkur IBA University</h1>
-          <p className="text-slate-600 text-sm mb-5 max-w-xl">Department of Computer Systems Engineering · Final Year Project 2026</p>
+          <p className="text-slate-600 text-sm mb-5 max-w-xl">Department of Computer Systems Engineering · Final Year Project 2026[cite: 1]</p>
           <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-teal-50 border border-teal-200 rounded-full text-sm text-teal-700 font-semibold shadow-inner">
-            <Award size={16} /> DermAI — Deep Learning-based Skin Disease Classification System
+            <Award size={16} /> DermAI — Deep Learning-based Skin Disease Classification System[cite: 1]
           </div>
         </motion.div>
 
@@ -91,11 +92,11 @@ export default function AboutPage() {
             <div className="flex flex-wrap gap-4 mt-6">
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-1 min-w-[200px]">
                 <p className="text-teal-200 text-xs uppercase tracking-wider font-bold mb-1">Ensemble Accuracy</p>
-                <p className="text-white text-3xl font-black">91%</p>
+                <p className="text-white text-3xl font-black">91%[cite: 1]</p>
               </div>
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-1 min-w-[200px]">
                 <p className="text-teal-200 text-xs uppercase tracking-wider font-bold mb-1">Explainability</p>
-                <p className="text-white text-xl font-bold italic">Grad-CAM Augmented</p>
+                <p className="text-white text-xl font-bold italic">Grad-CAM Augmented[cite: 1]</p>
               </div>
             </div>
           </div>
@@ -148,19 +149,20 @@ export default function AboutPage() {
                 <h3 className="font-bold text-slate-800 text-lg mb-1">{s.name}</h3>
                 <p className="text-sm font-semibold text-teal-600 mb-3">{s.title}</p>
                 <div className="h-px w-12 bg-slate-100 mx-auto mb-3 group-hover:w-20 transition-all"></div>
-                <p className="text-xs text-slate-400 leading-relaxed px-2">{s.org}</p>
+                <p className="text-xs text-slate-400 leading-relaxed px-2">{s.org}[cite: 1]</p>
               </motion.div>
             ))}
           </div>
         </section>
 
-        {/* Technical Stack with Fixed Logos */}
+        {/* Technical Stack - COLORFUL ICONS */}
         <motion.div custom={9} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
           <h2 className="text-lg font-bold text-slate-800 mb-6 text-center md:text-left">Technical Stack</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {TECH_STACK.map((tech) => (
               <div key={tech.name} className="flex flex-col items-center justify-center bg-slate-50 border border-slate-100 rounded-2xl p-4 hover:bg-teal-50 hover:border-teal-100 hover:shadow-md hover:-translate-y-1 transition-all group">
-                <div className="w-12 h-12 mb-3 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all">
+                {/* REMOVED GRAYSCALE FILTER */}
+                <div className="w-12 h-12 mb-3 flex items-center justify-center transition-all">
                   <img src={tech.img} alt={tech.name} className="max-w-full max-h-full object-contain" />
                 </div>
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight group-hover:text-teal-700">{tech.name}</span>
