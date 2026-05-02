@@ -74,7 +74,7 @@ export default function Footer() {
         {/* Bottom Bar — centered, no tags */}
         <div className="mt-12 pt-8 border-t border-slate-800 flex justify-center">
           <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wider text-center">
-            © 2025 DermAI · Sukkur IBA University · Department of Computer Systems Engineering
+            © 2026 DermAI · Sukkur IBA University · Department of Computer Systems Engineering
           </p>
         </div>
       </div>
