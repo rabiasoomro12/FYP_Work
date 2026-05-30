@@ -9,7 +9,6 @@ import Chatbot from './components/Chatbot';
 import LandingPage from './pages/LandingPage';
 import ClassifierPage from './pages/ClassifierPage';
 import EncyclopediaPage from './pages/EncyclopediaPage';
-import ModelComparisonPage from './pages/ModelComparisonPage';
 import MethodologyPage from './pages/MethodologyPage';
 import AboutPage from './pages/AboutPage';
 import AdminPage from './pages/AdminPage';
@@ -42,8 +41,7 @@ function AppLayout() {
           <Route path="/" element={<LandingPage onAuthClick={() => setAuthOpen(true)} />} />
           <Route path="/classifier" element={<ClassifierPage onAuthClick={() => setAuthOpen(true)} onPrediction={setPredictedClass} />} />
           <Route path="/encyclopedia" element={<EncyclopediaPage />} />
-          <Route path="/models" element={<ModelComparisonPage />} />
-          <Route path="/methodology" element={<MethodologyPage />} />
+<Route path="/methodology" element={<MethodologyPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/admin" element={<AdminPage />} />
         </Routes>

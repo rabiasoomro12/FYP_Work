@@ -38,7 +38,6 @@ export default function Footer() {
                 ['/', 'Home'],
                 ['/classifier', 'Smart Scan'],
                 ['/encyclopedia', 'Disease Library'],
-                ['/models', 'Models'],
                 ['/methodology', 'How it Works'],
                 ['/about', 'About'],
               ].map(([to, label]) => (
