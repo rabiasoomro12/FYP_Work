@@ -110,7 +110,7 @@ export default function AboutPage() {
             <div className="flex flex-wrap gap-4 mt-6">
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-1 min-w-[200px]">
                 <p className="text-teal-100 text-xs uppercase tracking-wider font-bold mb-1">Ensemble Accuracy</p>
-                <p className="text-white text-3xl font-black">96%</p>
+                <p className="text-white text-3xl font-black">92%</p>
               </div>
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex-1 min-w-[200px]">
                 <p className="text-teal-100 text-xs uppercase tracking-wider font-bold mb-1">Explainability</p>
