@@ -164,7 +164,7 @@ export default function MethodologyPage() {
             {[
               { name: 'MobileNetV3-Large', params: '~5.5M', feat: '960-d',  note: 'Hard-swish + SE attention. Best vasc precision (1.00). Efficient edge deployment.',  acc: '89%' },
               { name: 'ResNet-50',         params: '~25.6M', feat: '2048-d', note: 'Residual skip connections. Strongest mel & akiec recall among individual models.',     acc: '89%' },
-              { name: 'EfficientNet-B0',   params: '~5.3M',  feat: '1280-d', note: 'NAS-optimised MBConv blocks. Highest individual accuracy and mel precision (0.99).',  acc: '92%' },
+              { name: 'EfficientNet-B0',   params: '~5.3M',  feat: '1280-d', note: 'NAS-optimised MBConv blocks. Highest individual accuracy and mel precision (0.99).',  acc: '91%' },
               { name: 'EfficientNet-B3',   params: '~12.2M', feat: '1536-d', note: 'Compound-scaled (φ=3). Best mel recall balance vs. B0. Trained at 224×224.',         acc: '90%' },
             ].map((m) => (
               <div key={m.name} className="bg-slate-50 border border-slate-200 rounded-xl p-4 hover:border-teal-300 transition-colors">
