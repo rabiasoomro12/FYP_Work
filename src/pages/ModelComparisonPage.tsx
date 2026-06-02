@@ -78,6 +78,30 @@ export default function ModelComparisonPage() {
           </div>
         </motion.div>
 
+        {/* Model Summary Cards */}
+        <motion.div className="grid gap-4 lg:grid-cols-3 mb-6">
+          {MODELS.map((m, i) => (
+            <motion.div key={m.model} custom={i + 1} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
+              className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100"
+            >
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400 mb-2">{m.model}</p>
+                  <h3 className="text-xl font-bold text-slate-900">{m.accuracy.toFixed(2)}% Accuracy</h3>
+                </div>
+                <span className="w-3 h-3 rounded-full mt-1" style={{ background: m.color }} />
+              </div>
+              <div className="grid gap-2 text-sm text-slate-600">
+                <div className="flex justify-between"><span className="font-semibold text-slate-800">Precision</span><span>{m.precision.toFixed(1)}%</span></div>
+                <div className="flex justify-between"><span className="font-semibold text-slate-800">Recall</span><span>{m.recall.toFixed(1)}%</span></div>
+                <div className="flex justify-between"><span className="font-semibold text-slate-800">F1-Score</span><span>{m.f1.toFixed(1)}%</span></div>
+                <div className="flex justify-between"><span className="font-semibold text-slate-800">AUC</span><span>{m.auc.toFixed(1)}%</span></div>
+                {m.isEnsemble && <div className="mt-3 inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-teal-700 font-semibold bg-teal-50 px-3 py-1 rounded-full">Ensemble</div>}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
         {/* Comparison Table */}
         <motion.div custom={1} variants={fadeUp} initial="hidden" animate="show" 
           className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 mb-6"
