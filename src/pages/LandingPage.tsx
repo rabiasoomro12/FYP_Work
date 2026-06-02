@@ -13,7 +13,7 @@ const STATS = [
   { value: '10,000+', label: 'Clinical Cases', icon: Database, color: 'bg-teal-50 text-teal-600 border-teal-100' },
   { value: 'Quad-AI',  label: 'Ensemble Engine', icon: Brain,    color: 'bg-blue-50 text-blue-600 border-blue-100' },
   { value: '7 Types',  label: 'Lesion Detection', icon: BarChart2, color: 'bg-violet-50 text-violet-600 border-violet-100' },
-  { value: '92%+',     label: 'Ensemble Accuracy', icon: Zap,     color: 'bg-amber-50 text-amber-600 border-amber-100' },
+  { value: '91%+',     label: 'Ensemble Accuracy', icon: Zap,     color: 'bg-amber-50 text-amber-600 border-amber-100' },
 ];
 
 const FEATURES = [
@@ -161,6 +161,56 @@ export default function LandingPage({ onAuthClick }: Props) {
                 Try Guest Mode <ChevronRight size={18} />
               </Link>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Model Comparison CTA */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] items-center">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-teal-600 mb-3">Model Comparison</p>
+              <h2 className="text-4xl font-extrabold text-slate-900 mb-4">See how our ensemble stacks up against each architecture.</h2>
+              <p className="text-slate-500 text-base max-w-2xl leading-7">
+                Visit the Models page for a full performance breakdown of HQE Ensemble, EfficientNet, MobileNetV3, and ResNet-50. The comparison chart highlights accuracy, precision, recall, F1-score, and AUC for every model.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link to="/models" className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-2xl transition-all shadow-md">
+                  View Model Comparison <ArrowRight size={18} />
+                </Link>
+                <Link to="/methodology" className="inline-flex items-center gap-2 px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-2xl hover:bg-slate-50 transition-all">
+                  Learn More About HQE
+                </Link>
+              </div>
+            </div>
+
+            <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="rounded-[2rem] bg-slate-900 p-10 text-white shadow-2xl border border-slate-800">
+              <p className="text-sm uppercase tracking-[0.3em] text-teal-300 mb-6">Performance Highlights</p>
+              <div className="space-y-5">
+                <div className="flex items-center justify-between rounded-3xl bg-slate-800/80 p-5">
+                  <div>
+                    <p className="text-sm text-slate-300">Ensemble Accuracy</p>
+                    <p className="text-3xl font-bold text-white">91%</p>
+                  </div>
+                  <span className="text-sm text-teal-300 font-semibold">HQE Ensemble</span>
+                </div>
+                <div className="flex items-center justify-between rounded-3xl bg-slate-800/80 p-5">
+                  <div>
+                    <p className="text-sm text-slate-300">Top Individual Model</p>
+                    <p className="text-3xl font-bold text-white">91%</p>
+                  </div>
+                  <span className="text-sm text-teal-300 font-semibold">EfficientNet-B0</span>
+                </div>
+                <div className="flex items-center justify-between rounded-3xl bg-slate-800/80 p-5">
+                  <div>
+                    <p className="text-sm text-slate-300">Highest AUC</p>
+                    <p className="text-3xl font-bold text-white">98.2%</p>
+                  </div>
+                  <span className="text-sm text-teal-300 font-semibold">HQE Ensemble</span>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
