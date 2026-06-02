@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { to: '/', label: 'Home' },
   { to: '/classifier', label: 'Smart Scan' },
   { to: '/encyclopedia', label: 'Disease Library' },
+  { to: '/models', label: 'Models' },
   { to: '/methodology', label: 'How it Works' },
   { to: '/about', label: 'About' },
 ];
