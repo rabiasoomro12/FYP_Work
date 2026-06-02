@@ -73,7 +73,7 @@ export default function ModelComparisonPage() {
           <div>
             <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-0.5">Primary Architecture</p>
             <p className="text-lg font-bold text-white">
-              HQE Ensemble — 91.0% Accuracy · 0.88 Macro F1-Score
+              HQE Ensemble — 91% Accuracy · 0.88 Macro F1-Score
             </p>
           </div>
         </motion.div>
