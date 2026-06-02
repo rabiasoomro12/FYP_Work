@@ -12,18 +12,13 @@ import EncyclopediaPage from './pages/EncyclopediaPage';
 import MethodologyPage from './pages/MethodologyPage';
 import AboutPage from './pages/AboutPage';
 import AdminPage from './pages/AdminPage';
+import ModelComparisonPage from './pages/ModelComparisonPage';
 
-/**
- * ScrollToTop Component
- * Ensures the window scrolls to the top whenever the route changes.
- */
 function ScrollToTop() {
   const { pathname } = useLocation();
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
   return null;
 }
 
@@ -33,17 +28,18 @@ function AppLayout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <ScrollToTop /> {/* Reset scroll position on route change */}
+      <ScrollToTop />
       <Navbar onAuthClick={() => setAuthOpen(true)} />
-      
+
       <main className="flex-1 pt-16">
         <Routes>
           <Route path="/" element={<LandingPage onAuthClick={() => setAuthOpen(true)} />} />
           <Route path="/classifier" element={<ClassifierPage onAuthClick={() => setAuthOpen(true)} onPrediction={setPredictedClass} />} />
           <Route path="/encyclopedia" element={<EncyclopediaPage />} />
-<Route path="/methodology" element={<MethodologyPage />} />
+          <Route path="/methodology" element={<MethodologyPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/models" element={<ModelComparisonPage />} />
         </Routes>
       </main>
 

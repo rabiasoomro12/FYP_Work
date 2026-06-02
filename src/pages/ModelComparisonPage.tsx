@@ -1,27 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { BarChart2, Trophy, ShieldCheck } from 'lucide-react';
+import { BarChart2, ShieldCheck } from 'lucide-react';
 
-const fadeUp = { 
-  hidden: { opacity: 0, y: 20 }, 
-  show: (i = 0) => ({ 
-    opacity: 1, 
-    y: 0, 
-    transition: { delay: i * 0.1, duration: 0.45, ease: 'easeOut' } 
-  }) 
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.45, ease: 'easeOut' }
+  })
 };
 
 const MODEL_COLORS = ['#0f172a', '#0d9488', '#14b8a6', '#f59e0b', '#3b82f6'];
 
-const tooltipStyle = { 
-  contentStyle: { background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, fontSize: 12 }, 
-  labelStyle: { color: '#64748b', fontWeight: 600 } 
+const tooltipStyle = {
+  contentStyle: { background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, fontSize: 12 },
+  labelStyle: { color: '#64748b', fontWeight: 600 }
 };
 
-// Data updated based on the HQE Framework Paper
 const MODELS = [
-  { model: 'HQE Ensemble',   accuracy: 91.00, precision: 90.0, recall: 88.0, f1: 88.0, auc: 98.2, color: '#0f172a', isEnsemble: true },
+  { model: 'HQE Ensemble',    accuracy: 91.00, precision: 90.0, recall: 88.0, f1: 88.0, auc: 98.2, color: '#0f172a', isEnsemble: true },
   { model: 'EfficientNet-B0', accuracy: 91.00, precision: 92.0, recall: 86.0, f1: 88.0, auc: 97.6, color: '#0d9488' },
   { model: 'EfficientNet-B3', accuracy: 90.00, precision: 87.0, recall: 83.0, f1: 85.0, auc: 96.1, color: '#14b8a6' },
   { model: 'MobileNetV3',     accuracy: 89.00, precision: 88.0, recall: 80.0, f1: 84.0, auc: 94.1, color: '#f59e0b' },
@@ -30,11 +29,11 @@ const MODELS = [
 
 const SHORT = ['Ensemble', 'ENet-B0', 'ENet-B3', 'MobV3', 'ResNet-50'];
 
-const BAR_DATA = MODELS.map((m, i) => ({ 
-  name: SHORT[i], 
-  Accuracy: m.accuracy, 
-  'F1-Score': m.f1, 
-  'AUC-ROC': m.auc 
+const BAR_DATA = MODELS.map((m, i) => ({
+  name: SHORT[i],
+  Accuracy: m.accuracy,
+  'F1-Score': m.f1,
+  'AUC-ROC': m.auc
 }));
 
 const RADAR_DATA = [
@@ -49,7 +48,7 @@ export default function ModelComparisonPage() {
   return (
     <div className="min-h-screen py-10 px-4 bg-slate-50">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <div className="flex items-center gap-3 mb-1">
@@ -64,7 +63,7 @@ export default function ModelComparisonPage() {
         </motion.div>
 
         {/* Top Performer Card */}
-        <motion.div custom={0} variants={fadeUp} initial="hidden" animate="show" 
+        <motion.div custom={0} variants={fadeUp} initial="hidden" animate="show"
           className="mb-6 bg-slate-900 rounded-2xl p-5 flex items-center gap-4 shadow-lg border border-slate-800"
         >
           <div className="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center flex-shrink-0">
@@ -103,7 +102,7 @@ export default function ModelComparisonPage() {
         </motion.div>
 
         {/* Comparison Table */}
-        <motion.div custom={1} variants={fadeUp} initial="hidden" animate="show" 
+        <motion.div custom={1} variants={fadeUp} initial="hidden" animate="show"
           className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 mb-6"
         >
           <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
@@ -152,7 +151,7 @@ export default function ModelComparisonPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} />
                 <YAxis domain={[75, 100]} tick={{ fill: '#94a3b8', fontSize: 11 }} tickFormatter={(v) => `${v}%`} />
-                <Tooltip formatter={(v) => [`${v.toFixed(2)}%`]} {...tooltipStyle} />
+                <Tooltip formatter={(v: number) => [`${v.toFixed(2)}%`]} {...tooltipStyle} />
                 <Legend wrapperStyle={{ color: '#94a3b8', fontSize: 12, paddingTop: 20 }} />
                 <Bar dataKey="Accuracy" fill="#0f172a" radius={[3, 3, 0, 0]} />
                 <Bar dataKey="F1-Score" fill="#f59e0b" radius={[3, 3, 0, 0]} />
@@ -180,14 +179,14 @@ export default function ModelComparisonPage() {
         {/* Model Feature Cards */}
         <motion.div custom={4} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { name: 'EfficientNet-B0', params: '5.3M', weight: '0.20', feat: 'Inverse-frequency weighted loss[cite: 1]' },
-            { name: 'EfficientNet-B3', params: '12.2M', weight: '1.23', feat: 'Compound-scaled resolution[cite: 1]' },
-            { name: 'MobileNetV3',     params: '5.5M', weight: '9.46', feat: 'Inverted residuals & SE blocks[cite: 1]' },
-            { name: 'ResNet-50',       params: '25.6M', weight: '1.21', feat: 'Deep skip connections[cite: 1]' },
+            { name: 'EfficientNet-B0', params: '5.3M',  weight: '0.20', feat: 'Inverse-frequency weighted loss' },
+            { name: 'EfficientNet-B3', params: '12.2M', weight: '1.23', feat: 'Compound-scaled resolution' },
+            { name: 'MobileNetV3',     params: '5.5M',  weight: '9.46', feat: 'Inverted residuals & SE blocks' },
+            { name: 'ResNet-50',       params: '25.6M', weight: '1.21', feat: 'Deep skip connections' },
           ].map((m, i) => (
             <div key={m.name} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:border-teal-200 transition-all">
               <div className="flex items-center gap-2 mb-2">
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: MODEL_COLORS[i+1] }} />
+                <span className="w-2.5 h-2.5 rounded-full" style={{ background: MODEL_COLORS[i + 1] }} />
                 <span className="text-sm font-bold text-slate-700">{m.name}</span>
               </div>
               <p className="text-[11px] text-slate-500 leading-relaxed mb-3">{m.feat}</p>
@@ -198,6 +197,7 @@ export default function ModelComparisonPage() {
             </div>
           ))}
         </motion.div>
+
       </div>
     </div>
   );

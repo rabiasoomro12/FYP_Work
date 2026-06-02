@@ -3,8 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, LogOut, User, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-
-// IMPORT THE LOGO ASSET (Must now match .png casing)
 import logoImg from '../assets/dermai.png';
 
 const NAV_LINKS = [
@@ -26,17 +24,15 @@ export default function Navbar({ onAuthClick }: NavbarProps) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all duration-300">
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-500" />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2.5 group">
-            {/* LOGO CONTAINER: Changed background from placeholder gradient to white. overflow-hidden handles the crop. */}
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg shadow-black/5 overflow-hidden border border-slate-100 group-hover:rotate-6 transition-transform duration-300 p-0.5">
-              {/* THE IMAGE: object-contain keeps the aspect ratio. scale-250 focuses the center graphic and crops sides. */}
-              <img 
-                src={logoImg} 
-                alt="DermAI Logo" 
-                className="w-full h-full object-contain scale-[2.5] transform-gpu" 
+              <img
+                src={logoImg}
+                alt="DermAI Logo"
+                className="w-full h-full object-contain scale-[2.5] transform-gpu"
               />
             </div>
             <span className="font-extrabold text-slate-800 tracking-tight text-xl">
@@ -50,8 +46,8 @@ export default function Navbar({ onAuthClick }: NavbarProps) {
               return (
                 <Link key={to} to={to}
                   className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                    active 
-                      ? 'text-teal-700 bg-teal-50/80 shadow-sm' 
+                    active
+                      ? 'text-teal-700 bg-teal-50/80 shadow-sm'
                       : 'text-slate-600 hover:text-teal-600 hover:bg-slate-50'
                   }`}
                 >
