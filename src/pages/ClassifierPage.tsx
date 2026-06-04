@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, Lock, AlertCircle, CheckCircle2, Loader2, Image as ImageIcon, RefreshCw, FlaskConical, TrendingUp, Download } from 'lucide-react';
+import { Upload, X, Lock, AlertCircle, CheckCircle2, Loader2, Image as ImageIcon, RefreshCw, FlaskConical, TrendingUp, Download, Leaf } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useScan } from '../context/ScanContext';
 import { supabase } from '../lib/supabase';
@@ -46,18 +46,33 @@ function normalizeProbabilities(raw: unknown): Record<string, number> {
   return {};
 }
 
+// ── NEW: Check is_simple_mole FIRST before doing anything else ──────────────
+async function checkSimpleMole(file: File): Promise<{ isSimpleMole: boolean; message: string }> {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await fetch(`${HF_BASE}/predict`, { method: 'POST', body: form });
+  if (!res.ok) return { isSimpleMole: false, message: '' };
+  const data = await res.json();
+  if (data.is_simple_mole === true) {
+    return { isSimpleMole: true, message: data.message ?? '✅ This appears to be a simple mole. Nothing serious detected.' };
+  }
+  return { isSimpleMole: false, message: '' };
+}
+
 async function callModel(file: File, modelName: string): Promise<ModelPrediction> {
   const form = new FormData();
   form.append('file', file);
   form.append('model', modelName);
   const res = await fetch(`${HF_BASE}/predict`, { method: 'POST', body: form });
   if (!res.ok) {
-  let message = `Model ${modelName} failed: ${res.status}`;
-  try { const e = await res.json(); if (e.detail) message = e.detail; } catch {}
-  throw new Error(message);
-}
+    let message = `Model ${modelName} failed: ${res.status}`;
+    try { const e = await res.json(); if (e.detail) message = e.detail; } catch {}
+    throw new Error(message);
+  }
   const data = await res.json();
-  // predicted_class comes as "mel - Melanoma" → extract abbreviation
+  // If any individual model call also returns is_simple_mole, treat it as an error
+  // so the flow stops (the checkSimpleMole call above should have caught it first)
+  if (data.is_simple_mole === true) throw new Error('__SIMPLE_MOLE__');
   const predicted_class = extractAbbrev(data.predicted_class ?? '');
   const probabilities = normalizeProbabilities(data.all_probabilities ?? data.probabilities);
   const rawConf = typeof data.confidence === 'number' ? data.confidence : 0;
@@ -69,20 +84,19 @@ async function ensemblePredict(file: File) {
   const models = ['efficientnet_b0', 'efficientnet_b3', 'mobilenet_v3', 'resnet50'];
   const results = await Promise.allSettled(models.map((m) => callModel(file, m)));
   const successful = results.filter((r): r is PromiseFulfilledResult<ModelPrediction> => r.status === 'fulfilled').map((r) => r.value);
-if (successful.length === 0) {
-  const reasons = results
-    .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
-    .map((r) => (r.reason as Error)?.message ?? '');
-  const unique = [...new Set(reasons)];
-  throw new Error(unique.length === 1 ? unique[0] : 'All models failed to respond.');
-}
+  if (successful.length === 0) {
+    const reasons = results
+      .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+      .map((r) => (r.reason as Error)?.message ?? '');
+    const unique = [...new Set(reasons)];
+    throw new Error(unique.length === 1 ? unique[0] : 'All models failed to respond.');
+  }
   const averaged: Record<string, number> = {};
   for (const cls of CLASSES) {
     const vals = successful.map((p) => p.probabilities?.[cls] ?? 0);
     averaged[cls] = vals.reduce((a, b) => a + b, 0) / vals.length;
   }
   const predictedClass = Object.entries(averaged).sort((a, b) => b[1] - a[1])[0][0];
-  // Use Grad-CAM from first model that returned one
   const gradcamImage = successful.find((p) => p.gradcam_image)?.gradcam_image ?? null;
   return { predictions: successful, ensemble: { predictedClass, confidence: averaged[predictedClass], probabilities: averaged }, gradcamImage };
 }
@@ -108,6 +122,10 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [generatingReport, setGeneratingReport] = useState(false);
 
+  // ── NEW: simple mole state ─────────────────────────────────────────────────
+  const [isSimpleMole, setIsSimpleMole] = useState(false);
+  const [simpleMoleMessage, setSimpleMoleMessage] = useState('');
+
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith('image/')) return;
     setSelectedFile(file);
@@ -116,6 +134,9 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
     setModelPredictions([]);
     setApiError('');
     setGradcamUrl(null);
+    // ── reset mole state on new file ────────────────────────────────────────
+    setIsSimpleMole(false);
+    setSimpleMoleMessage('');
   }, [setScanResult]);
 
   const onDrop = useCallback((e: React.DragEvent) => {
@@ -125,9 +146,25 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
 
   const analyze = async () => {
     if (!selectedFile || !previewUrl) return;
-    setAnalyzing(true); setApiError('');
-    setAnalyzeStep('Processing...');
+    setAnalyzing(true);
+    setApiError('');
+    setIsSimpleMole(false);
+    setSimpleMoleMessage('');
+    setAnalyzeStep('Checking image...');
+
     try {
+      // ── STEP 1: Check is_simple_mole FIRST ──────────────────────────────
+      const { isSimpleMole: mole, message } = await checkSimpleMole(selectedFile);
+      if (mole) {
+        setIsSimpleMole(true);
+        setSimpleMoleMessage(message);
+        // Tell chatbot this is a simple mole
+        onPrediction?.('simple_mole');
+        return; // stop here — no model inference needed
+      }
+
+      // ── STEP 2: Normal ensemble prediction ──────────────────────────────
+      setAnalyzeStep('Running ensemble models...');
       const { predictions, ensemble, gradcamImage } = await ensemblePredict(selectedFile);
       setModelPredictions(predictions);
       const result = {
@@ -165,6 +202,9 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
     setScanResult(null);
     setModelPredictions([]);
     setApiError('');
+    // ── reset mole state ───────────────────────────────────────────────────
+    setIsSimpleMole(false);
+    setSimpleMoleMessage('');
   };
 
   const info = scanResult ? CLASS_INFO[scanResult.predictedClass] : null;
@@ -183,24 +223,20 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
     <div className="min-h-screen py-10 px-4 bg-slate-50">
       <div className="max-w-7xl mx-auto">
         <motion.div
-  initial={{ opacity: 0, y: 16 }}
-  animate={{ opacity: 1, y: 0 }}
-  className="mb-8"
->
-  <div className="flex items-center gap-3 mb-1">
-    <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm">
-      <FlaskConical size={18} className="text-white" />
-    </div>
-
-    <h1 className="text-2xl font-bold text-slate-800">
-      AI Skin Scan
-    </h1>
-  </div>
-
-  <p className="text-slate-500 text-sm ml-12">
-    Upload a skin image for an AI-powered assessment of possible skin conditions
-  </p>
-</motion.div>
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center shadow-sm">
+              <FlaskConical size={18} className="text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-800">AI Skin Scan</h1>
+          </div>
+          <p className="text-slate-500 text-sm ml-12">
+            Upload a skin image for an AI-powered assessment of possible skin conditions
+          </p>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Left column: upload + model votes */}
@@ -237,7 +273,7 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                   >
                     <X size={14} />
                   </button>
-                  {scanResult && (
+                  {(scanResult || isSimpleMole) && (
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-3">
                       <p className="text-xs text-teal-300 font-mono mb-0.5">Analysis complete</p>
                       <div className="h-1.5 rounded-full bg-gradient-to-r from-blue-500 via-green-400 via-yellow-400 to-red-500" />
@@ -252,7 +288,7 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                       <p className="text-xs text-red-600">{apiError}</p>
                     </div>
                   )}
-                  {!scanResult ? (
+                  {!scanResult && !isSimpleMole ? (
                     <button
                       onClick={analyze}
                       disabled={analyzing}
@@ -275,8 +311,8 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
               </motion.div>
             )}
 
-            {/* Per-model votes */}
-            {modelPredictions.length > 0 && (
+            {/* Per-model votes — hidden for simple mole */}
+            {modelPredictions.length > 0 && !isSimpleMole && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Individual Model Votes</p>
                 <div className="space-y-2.5">
@@ -315,7 +351,67 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
           {/* Right column: results */}
           <div className="lg:col-span-3 space-y-5">
             <AnimatePresence mode="wait">
-              {!scanResult && !analyzing && !apiError && (
+
+              {/* ── SIMPLE MOLE RESULT — shown instead of full analysis ── */}
+              {isSimpleMole && !analyzing && (
+                <motion.div
+                  key="simple-mole"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm border border-emerald-200"
+                >
+                  {/* Green header */}
+                  <div className="bg-emerald-50 border-b border-emerald-100 px-6 py-5 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                      <Leaf size={20} className="text-emerald-600" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-emerald-800 text-base">Simple Mole Detected</p>
+                      <p className="text-xs text-emerald-600">No further AI analysis required</p>
+                    </div>
+                    <div className="ml-auto">
+                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
+                        ✅ Benign
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Message body */}
+                  <div className="px-6 py-5 space-y-4">
+                    <p className="text-sm text-slate-700 leading-relaxed">{simpleMoleMessage}</p>
+
+                    {/* Info cards */}
+                    <div className="grid grid-cols-1 gap-3">
+                      <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                        <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-semibold text-emerald-800 mb-0.5">What this means</p>
+                          <p className="text-xs text-emerald-700">
+                            This image has been identified as a common benign mole (nevus). These are non-cancerous skin growths and are very common.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                        <AlertCircle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-semibold text-amber-800 mb-0.5">When to see a doctor</p>
+                          <p className="text-xs text-amber-700">
+                            Monitor for changes in size, shape, color or if it starts to bleed. Use the <strong>ABCDE rule</strong>: Asymmetry, Border, Color, Diameter, Evolution.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-[11px] text-slate-400 text-center pt-1">
+                      This is an AI screening tool only. Always consult a real doctor if you have any concerns.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ── EMPTY STATE ── */}
+              {!scanResult && !analyzing && !apiError && !isSimpleMole && (
                 <motion.div
                   key="placeholder"
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -329,6 +425,7 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                 </motion.div>
               )}
 
+              {/* ── LOADING STATE ── */}
               {analyzing && (
                 <motion.div
                   key="loading"
@@ -342,12 +439,13 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                       <FlaskConical size={16} className="text-teal-600" />
                     </div>
                   </div>
-                  <p className="text-slate-700 font-semibold mb-1">Start Analysis</p>
+                  <p className="text-slate-700 font-semibold mb-1">Analyzing...</p>
                   <p className="text-xs text-slate-400 max-w-xs">{analyzeStep}</p>
                 </motion.div>
               )}
 
-              {scanResult && !analyzing && (
+              {/* ── FULL ANALYSIS RESULTS ── */}
+              {scanResult && !analyzing && !isSimpleMole && (
                 <motion.div key="results" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
                   {!user ? (
                     <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200">
@@ -422,18 +520,18 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                             onClick={async () => {
                               setGeneratingReport(true);
                               await generatePatientReport({
-  patientEmail: user!.email ?? '',
-  patientName: fullName || user?.user_metadata?.full_name || 'Unknown Patient',
-  predictedClass: scanResult.predictedClass,
-  predictedLabel: info?.name ?? scanResult.predictedClass,
-  confidence: scanResult.confidence,
-  risk: info?.risk ?? 'Low',
-  riskColor: info?.color ?? '#10b981',
-  probabilities: scanResult.probabilities,
-  previewUrl,
-  gradcamUrl,
-  modelCount: modelPredictions.length || 4,
-});
+                                patientEmail: user!.email ?? '',
+                                patientName: fullName || user?.user_metadata?.full_name || 'Unknown Patient',
+                                predictedClass: scanResult.predictedClass,
+                                predictedLabel: info?.name ?? scanResult.predictedClass,
+                                confidence: scanResult.confidence,
+                                risk: info?.risk ?? 'Low',
+                                riskColor: info?.color ?? '#10b981',
+                                probabilities: scanResult.probabilities,
+                                previewUrl,
+                                gradcamUrl,
+                                modelCount: modelPredictions.length || 4,
+                              });
                               setGeneratingReport(false);
                             }}
                             disabled={generatingReport}
@@ -453,7 +551,6 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Image Comparison</p>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
-                          {/* Original */}
                           <div className="rounded-xl overflow-hidden border border-slate-200">
                             <div className="relative aspect-square bg-slate-100">
                               <img src={previewUrl!} alt="Original dermoscopic image" className="w-full h-full object-cover" />
@@ -466,8 +563,6 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                               <p className="text-[11px] text-slate-400 truncate">{selectedFile?.name}</p>
                             </div>
                           </div>
-
-                          {/* Grad-CAM */}
                           <div className="rounded-xl overflow-hidden border border-slate-200">
                             <div className="relative aspect-square bg-slate-100">
                               {gradcamUrl ? (
