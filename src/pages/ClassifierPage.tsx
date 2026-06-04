@@ -388,7 +388,7 @@ export default function ClassifierPage({ onAuthClick, onPrediction }: Props) {
                         <div>
                           <p className="text-xs font-semibold text-emerald-800 mb-0.5">What this means</p>
                           <p className="text-xs text-emerald-700">
-                            This image has been identified as a common benign mole (nevus). These are non-cancerous skin growths and are very common.
+                            This image has been identified as a common mole. These are non-cancerous skin growths and are very common.
                           </p>
                         </div>
                       </div>
